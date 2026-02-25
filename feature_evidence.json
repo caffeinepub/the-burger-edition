@@ -1,0 +1,43 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-replace-the-content-of-frontend-src-pages-footballbrosgame-tsx-so-that-instead-of-rendering-a-custom-react-three-fiber-3d-game-it-embeds-the-actual-game-from-https-footballbros-io-inside-a-full-screen-iframe-the-iframe-must-fill-the-available-viewport-height-at-minimum-600px-ideally-100vh-minus-the-header-have-no-border-and-be-styled-consistently-with-the-retro-arcade-neon-theme-surrounding-it-remove-all-references-to-the-usefootballbrosgame-hook-and-three-js-scene-from-the-page-component-keep-the-page-title-leaderboard-section-and-score-submission-section-intact-below-the-iframe",
+      "featureTitle": "Replace the content of `frontend/src/pages/FootballBrosGame.tsx` so that instead of rendering a custom React Three Fiber 3D game, it embeds the actual game from https://footballbros.io inside a full-screen `<iframe>`. The iframe must fill the available viewport height (at minimum 600px, ideally 100vh minus the header), have no border, and be styled consistently with the retro arcade neon theme surrounding it. Remove all references to the `useFootballBrosGame` hook and Three.js scene from the page component. Keep the page title, leaderboard section, and score submission section intact below the iframe.",
+      "files": [
+        "frontend/src/pages/FootballBrosGame.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-41"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-remove-the-usefootballbrosgame-hook-file-at-frontend-src-hooks-usefootballbrosgame-ts-since-it-is-no-longer-used-by-the-iframe-based-football-bros-page",
+      "featureTitle": "Remove the `useFootballBrosGame` hook file at `frontend/src/hooks/useFootballBrosGame.ts` since it is no longer used by the iframe-based Football Bros page.",
+      "files": [
+        "frontend/src/hooks/useFootballBrosGame.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-42"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

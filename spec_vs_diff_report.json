@@ -1,0 +1,32 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T18:49:45.049Z",
+  "summary": "REQ-41 is largely implemented: FootballBrosGame.tsx now renders an iframe with src='https://footballbros.io', no Three.js/React Three Fiber canvas, retro neon heading retained, and Leaderboard present. However ScoreSubmission is missing. REQ-42 is only partially satisfied: the file useFootballBrosGame.ts still exists as a modified file rather than being removed.",
+  "missing_requirements": [
+    {
+      "id": "REQ-42",
+      "requirement": "Remove the `useFootballBrosGame` hook file at `frontend/src/hooks/useFootballBrosGame.ts` since it is no longer used by the iframe-based Football Bros page.",
+      "reason": "The diff shows `frontend/src/hooks/useFootballBrosGame.ts` as a MODIFIED file, not a REMOVED file. The file still exists, violating the AC that it no longer exists or is empty.",
+      "evidence": [
+        "frontend/src/hooks/useFootballBrosGame.ts"
+      ]
+    },
+    {
+      "id": "REQ-41",
+      "requirement": "The Leaderboard and ScoreSubmission components remain present below the iframe, consistent with other game pages.",
+      "reason": "The updated FootballBrosGame.tsx includes a Leaderboard component but does not include a ScoreSubmission component, which is required by the acceptance criteria.",
+      "evidence": [
+        "frontend/src/pages/FootballBrosGame.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.82,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/hooks/useFootballBrosGame.ts",
+    "frontend/src/pages/FootballBrosGame.tsx",
+    "project_state.json"
+  ]
+}

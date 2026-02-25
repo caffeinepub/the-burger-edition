@@ -1,0 +1,49 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T18:49:45.053Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 2,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-41",
+        "summary": "Replace the content of `frontend/src/pages/FootballBrosGame.tsx` so that instead of rendering a custom React Three Fiber 3D game, it embeds the actual game from https://footballbros.io inside a full-screen `<iframe>`. The iframe must fill the available viewport height (at minimum 600px, ideally 100vh minus the header), have no border, and be styled consistently with the retro arcade neon theme surrounding it. Remove all references to the `useFootballBrosGame` hook and Three.js scene from the page component. Keep the page title, leaderboard section, and score submission section intact below the iframe.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/FootballBrosGame.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/FootballBrosGame.tsx"
+        ]
+      },
+      {
+        "id": "REQ-42",
+        "summary": "Remove the `useFootballBrosGame` hook file at `frontend/src/hooks/useFootballBrosGame.ts` since it is no longer used by the iframe-based Football Bros page.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useFootballBrosGame.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useFootballBrosGame.ts"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/hooks/useFootballBrosGame.ts",
+    "frontend/src/pages/FootballBrosGame.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

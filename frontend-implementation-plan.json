@@ -1,0 +1,41 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Replace Football Bros game page with embedded footballbros.io iframe",
+  "requirements": [
+    {
+      "id": "REQ-41",
+      "summary": "Replace the custom React Three Fiber 3D game in FootballBrosGame.tsx with a full-screen iframe embedding https://footballbros.io, keeping the retro arcade theme, page title, leaderboard, and score submission intact",
+      "acceptanceCriteria": [
+        "Navigating to /football-bros renders an iframe with src='https://footballbros.io' that fills the main content area.",
+        "The iframe has no visible border and is at least 600px tall.",
+        "No Three.js canvas, React Three Fiber Canvas, or useFootballBrosGame hook is rendered on this page.",
+        "The page retains the retro neon arcade heading/title for Football Bros.",
+        "The Leaderboard and ScoreSubmission components remain present below the iframe, consistent with other game pages."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/FootballBrosGame.tsx",
+          "operation": "modify",
+          "description": "Replace the entire React Three Fiber Canvas and 3D game scene with a full-screen iframe element (src='https://footballbros.io'). Remove all imports and references to useFootballBrosGame, @react-three/fiber, and @react-three/drei. Keep the page structure with the retro neon arcade heading 'Football Bros', the iframe styled with min-height 600px or 100vh minus header (no border, full width), and the Leaderboard and ScoreSubmission components below the iframe. Maintain consistent spacing and neon theme styling matching other game pages."
+        }
+      ]
+    },
+    {
+      "id": "REQ-42",
+      "summary": "Remove the unused useFootballBrosGame hook file since the Football Bros page now uses an iframe instead of custom game logic",
+      "acceptanceCriteria": [
+        "The file `frontend/src/hooks/useFootballBrosGame.ts` no longer exists or is empty.",
+        "No other file imports from `useFootballBrosGame`.",
+        "The application builds without errors after removal."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useFootballBrosGame.ts",
+          "operation": "delete",
+          "description": "Delete the useFootballBrosGame.ts hook file as it is no longer used by the iframe-based Football Bros page. Verify no other files import from this hook before deletion."
+        }
+      ]
+    }
+  ]
+}

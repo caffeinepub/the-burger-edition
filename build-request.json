@@ -1,0 +1,65 @@
+{
+  "kind": "build_request",
+  "title": "Replace Football Bros game page with embedded footballbros.io iframe",
+  "projectName": "Arcade Hub",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-41",
+      "text": "Replace the content of `frontend/src/pages/FootballBrosGame.tsx` so that instead of rendering a custom React Three Fiber 3D game, it embeds the actual game from https://footballbros.io inside a full-screen `<iframe>`. The iframe must fill the available viewport height (at minimum 600px, ideally 100vh minus the header), have no border, and be styled consistently with the retro arcade neon theme surrounding it. Remove all references to the `useFootballBrosGame` hook and Three.js scene from the page component. Keep the page title, leaderboard section, and score submission section intact below the iframe.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-5"
+        ],
+        "quotes": [
+          "replace Football Bros with this game https://footballbros.io",
+          "I'll replace the custom Football Bros 3D game page with an iframe embedding the actual footballbros.io game"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Navigating to /football-bros renders an iframe with src='https://footballbros.io' that fills the main content area.",
+        "The iframe has no visible border and is at least 600px tall.",
+        "No Three.js canvas, React Three Fiber Canvas, or useFootballBrosGame hook is rendered on this page.",
+        "The page retains the retro neon arcade heading/title for Football Bros.",
+        "The Leaderboard and ScoreSubmission components remain present below the iframe, consistent with other game pages."
+      ]
+    },
+    {
+      "id": "REQ-42",
+      "text": "Remove the `useFootballBrosGame` hook file at `frontend/src/hooks/useFootballBrosGame.ts` since it is no longer used by the iframe-based Football Bros page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-5"
+        ],
+        "quotes": [
+          "replace Football Bros with this game https://footballbros.io"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The file `frontend/src/hooks/useFootballBrosGame.ts` no longer exists or is empty.",
+        "No other file imports from `useFootballBrosGame`.",
+        "The application builds without errors after removal."
+      ]
+    }
+  ],
+  "constraints": [
+    "The /football-bros route registration in App.tsx must remain unchanged.",
+    "The Football Bros lobby card in GameLobby.tsx must remain unchanged.",
+    "The Football Bros navigation link in Layout.tsx must remain unchanged.",
+    "Do not modify any immutable frontend paths (useInternetIdentity, useActor, main.tsx, ui components)."
+  ],
+  "nonGoals": [
+    "Building any new custom game logic or 3D scene for Football Bros.",
+    "Changing any other game pages.",
+    "Modifying the backend.",
+    "Changing the lobby card description or route."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
