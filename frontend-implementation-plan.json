@@ -1,90 +1,112 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Build OVO 2D Platformer with Levels and Portals",
+  "title": "3D 1v1 FPS Battle Game with Weapons and AI Difficulty",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Implement core 2D platformer mechanics in useOvoGame.ts including smooth running, jumping, wall-jumping, sliding, coyote time, and gravity-based physics for the player character.",
+      "summary": "Create a new React Three Fiber / Three.js game hook `use1v1Lol3DGame.ts` that implements a 3D first-person/third-person 1v1 battle game with player state, AI bot state, projectile physics, and collision detection in a 3D arena",
       "acceptanceCriteria": [
-        "Player can run left and right with smooth acceleration and deceleration",
-        "Player can jump with realistic gravity arc",
-        "Wall-jump and slide mechanics are functional",
-        "Coyote time allows brief jump window after walking off a platform edge"
+        "Hook exports game state (player, bot, projectiles, gamePhase, score) and action handlers",
+        "Player and bot each have HP that decreases when hit by projectiles",
+        "Game phase transitions: idle → playing → game-over",
+        "All state updates occur inside a requestAnimationFrame game loop"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useOvoGame.ts",
-          "operation": "modify",
-          "description": "Enhance player physics in the game loop to add smooth acceleration/deceleration for horizontal movement, wall-jump detection and mechanics (detect wall contact, allow jump with horizontal velocity boost away from wall), wall-slide friction when touching a wall while falling, and coyote time implementation (track frames since leaving ground, allow jump input within coyote window). Update the player state to include velocity components, grounded state, wall-contact state, and coyote timer. Ensure gravity is applied each frame with a realistic arc."
+          "path": "frontend/src/hooks/use1v1Lol3DGame.ts",
+          "operation": "create",
+          "description": "Create a new React hook that manages 3D game state for a 1v1 FPS battle. The hook must export game state (player position/HP/weapon/ammo, bot position/HP/weapon/ammo/difficulty, projectiles array, gamePhase enum, score object) and action handlers (startGame, fire, switchWeapon, movePlayer, selectDifficulty, reset). Implement a ref-based requestAnimationFrame game loop that updates projectile positions, checks 3D collision detection between projectiles and player/bot, decrements HP on hits, and transitions gamePhase from idle → playing → game-over. Player and bot each start with 100 HP. Track all state in refs for performance and expose read-only state via useState for React rendering."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Design and implement at least 10 platformer levels in useOvoGame.ts with increasing difficulty, varied platform layouts, hazards, gaps, and moving platforms.",
+      "summary": "Implement four weapons (Sniper, Shotgun, Pistol, Machine Gun) with distinct stats, switchable via number keys 1–4, each tracking ammo and reload state",
       "acceptanceCriteria": [
-        "At least 10 distinct levels are defined",
-        "Each level has a unique platform layout",
-        "Difficulty visibly increases across levels (wider gaps, more hazards, more complex paths)",
-        "Levels load correctly in sequence"
+        "Pressing keys 1, 2, 3, 4 switches to Sniper, Shotgun, Pistol, Machine Gun respectively",
+        "Each weapon has correct ammo capacity and reload timer",
+        "Firing is blocked when ammo is 0 and weapon is reloading",
+        "Shotgun fires multiple pellets in a spread pattern",
+        "HUD displays current weapon name, ammo count, and reload progress"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useOvoGame.ts",
+          "path": "frontend/src/hooks/use1v1Lol3DGame.ts",
           "operation": "modify",
-          "description": "Expand the levels array to include at least 10 distinct level definitions. Each level should specify unique platform coordinates, hazard positions (spikes, pits), gap widths, and optionally moving platform definitions with their movement patterns. Ensure difficulty progression by increasing gap distances, adding more hazards, introducing tighter timing windows, and more complex vertical navigation in later levels. Add logic to load and transition between levels in sequence."
+          "description": "Add weapon system with four weapon types: Sniper (1 ammo, 2.5s reload, 80 damage), Shotgun (5 ammo, 1.5s reload, 6 pellets × 15 damage each, spread pattern), Pistol (20 ammo, 0.8s reload, 25 damage), Machine Gun (25 ammo, 1.2s reload, 12 damage, rapid fire). Track currentWeapon, ammo, reloadTimer, and isReloading for both player and bot. Implement switchWeapon handler that responds to keys 1–4. Block firing when ammo is 0 or isReloading is true. For Shotgun, generate 6 projectiles with randomized spread angles. Automatically trigger reload when ammo reaches 0. Expose weapon state in the hook's return value."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Implement portal objects in useOvoGame.ts that, when the player touches them, teleport the player to a specified target position within the same level or to the start of a specified level.",
+      "summary": "Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) that scale by reaction time and accuracy, with dynamic weapon switching based on distance to player and a pre-game difficulty selection screen",
       "acceptanceCriteria": [
-        "Portal objects are placed in level definitions with a target position or target level",
-        "Player is instantly teleported when touching a portal",
-        "Portals are visually distinct (e.g., glowing ring or swirl animation) on the canvas",
-        "Portals can target a different coordinate in the same level or jump to a new level"
+        "Difficulty selection screen appears before the game starts with Easy/Medium/Hard/Extreme options",
+        "AI reaction time matches the specified delay per difficulty",
+        "AI aim accuracy scales with difficulty (higher difficulty = tighter shot spread)",
+        "AI switches to Sniper when player is far, Shotgun when close, Pistol/MachineGun at medium range",
+        "AI reloads weapons when empty just like the player"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useOvoGame.ts",
+          "path": "frontend/src/hooks/use1v1Lol3DGame.ts",
           "operation": "modify",
-          "description": "Add a portal array to each level definition, where each portal specifies its position (x, y), size, and target (either a destination coordinate within the current level or a target level index). In the game loop collision detection, check if the player overlaps any portal hitbox. On collision, immediately update the player position to the portal's target coordinates, or transition to the target level if specified. Store portal animation state (e.g., rotation angle, pulse phase) for rendering."
+          "description": "Add AI difficulty system with four levels: Easy (1500ms reaction, 40% accuracy), Medium (800ms reaction, 60% accuracy), Hard (350ms reaction, 80% accuracy), Extreme (80ms reaction, 95% accuracy). Store selectedDifficulty in state and expose selectDifficulty handler. In the game loop, implement AI logic that calculates distance to player and switches weapons (Sniper if distance > 30 units, Shotgun if distance < 10 units, Pistol/MachineGun otherwise, with thresholds scaled by difficulty). Apply reaction delay before AI fires. Add random aim offset inversely proportional to accuracy percentage. Ensure AI reloads when ammo is 0. Start gamePhase in 'idle' to allow difficulty selection before transitioning to 'playing'."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Implement a level exit/end goal in each level in useOvoGame.ts. When the player reaches the exit, they progress to the next level. After the final level, the game is considered complete and the score (time elapsed) is submitted.",
+      "summary": "Build a 3D arena scene in `OneLolGame.tsx` using React Three Fiber with ground, walls, cover obstacles, pointer-lock WASD movement, visible AI bot mesh, and projectile rendering",
       "acceptanceCriteria": [
-        "Each level has a clearly marked exit object",
-        "Touching the exit transitions the player to the next level",
-        "Completing the final level triggers the game-complete state",
-        "A timer tracks elapsed time as the score"
+        "Arena renders in 3D with ground, walls, and at least 6 cover obstacles",
+        "Player can move with WASD and look with mouse (pointer lock)",
+        "AI bot is represented by a 3D mesh (e.g., box or capsule) that moves toward/away from player",
+        "Projectiles are visible as small 3D meshes traveling from shooter to target",
+        "Game renders at 60fps with no major visual glitches"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useOvoGame.ts",
+          "path": "frontend/src/pages/OneLolGame.tsx",
           "operation": "modify",
-          "description": "Add an exit object to each level definition with position and hitbox dimensions. In the game loop, check for collision between the player and the exit. On collision, increment the current level index and reset player position to the start of the next level. If the current level is the final level (index equals levels.length - 1), set a gameComplete flag to true. Track elapsed time in milliseconds from game start, updating each frame, and expose this as the final score."
+          "description": "Replace the existing 2D canvas-based 1v1 game with a 3D React Three Fiber implementation. Import Canvas from @react-three/fiber and PointerLockControls from @react-three/drei. Replace the use1v1LolGame hook with use1v1Lol3DGame. Render a <Canvas> element with a 3D arena: a flat ground plane (BoxGeometry scaled wide and thin), perimeter walls (4 tall BoxGeometry boxes forming a square boundary), and at least 6 cover obstacles (BoxGeometry boxes or cylinders positioned around the arena). Add <PointerLockControls> and implement WASD movement in a useFrame hook that updates player position in the game hook. Render the AI bot as a colored BoxGeometry or CapsuleGeometry mesh at bot.position. Map projectiles array to small SphereGeometry or CylinderGeometry meshes positioned at each projectile's 3D coordinates. Add ambient and directional lights. Remove all canvas-based rendering code."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Update OvoGame.tsx to render portals on the canvas with a visually distinctive animated appearance (e.g., pulsing glow or swirl), display the current level number, and show a game-complete screen with score submission and leaderboard when all levels are finished.",
+      "summary": "Add an in-game HUD overlaid on the 3D canvas showing player HP, AI HP, current weapon/ammo, reload progress, difficulty label, and a centered crosshair",
       "acceptanceCriteria": [
-        "Portals are drawn with an animated visual effect on the canvas each frame",
-        "Current level number is displayed in the HUD",
-        "Game-complete overlay appears after the final level with elapsed time score",
-        "Score submission and leaderboard components are shown on completion"
+        "Player HP bar and AI HP bar are both visible during gameplay",
+        "Weapon name and ammo count update immediately on switching or firing",
+        "Reload progress bar appears and fills during reload, disappears when complete",
+        "Crosshair is centered on screen at all times during gameplay",
+        "Difficulty label is visible during the match"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/OvoGame.tsx",
+          "path": "frontend/src/pages/OneLolGame.tsx",
           "operation": "modify",
-          "description": "In the canvas rendering loop, add drawing logic for portals using the portal data from useOvoGame. Draw each portal as a circle or ring with a gradient fill, applying an animated pulsing effect (scale or opacity oscillation) and rotation based on the portal animation state. Update the HUD rendering to display the current level number (e.g., 'Level X/10'). Add conditional rendering outside the canvas for a game-complete overlay that appears when gameComplete is true, showing the elapsed time score converted to seconds, and including the ScoreSubmission and Leaderboard components as already implemented for other games."
+          "description": "Add a HUD overlay positioned absolutely over the 3D Canvas. Include: a player HP bar (top-left, styled with neon green), an AI HP bar (top-right, styled with neon red), a weapon/ammo display (bottom-center, showing currentWeapon name and ammo count like 'Pistol 18/20'), a reload progress bar (below weapon display, visible only when isReloading is true, filling based on reloadTimer progress), a difficulty label (top-center, showing selectedDifficulty), and a crosshair (fixed center of screen, small cross or dot). Use Tailwind classes for positioning and neon arcade styling. Ensure HUD elements do not interfere with pointer-lock controls."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Show a game-over screen when either player or AI reaches 0 HP, displaying winner, match result, and a 'Play Again' button that resets to difficulty selection; integrate ScoreSubmission on player win",
+      "acceptanceCriteria": [
+        "Game-over screen appears immediately when HP reaches 0",
+        "Screen clearly states 'You Win' or 'You Lose'",
+        "'Play Again' button returns to the difficulty selection screen and resets all state",
+        "Score submission form appears on win screen",
+        "Leaderboard is shown below score submission on win"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/OneLolGame.tsx",
+          "operation": "modify",
+          "description": "Add conditional rendering for gamePhase. When gamePhase is 'game-over', hide the Canvas and HUD, and show a game-over overlay. Display 'You Win!' if player HP > 0 and bot HP is 0, or 'You Lose!' if bot HP > 0 and player HP is 0. Show the final score. If player won, render the existing ScoreSubmission component (pass score as prop) and Leaderboard component below it (use gameName='1v1-lol-3d', preferHigher=true). Include a 'Play Again' button that calls the reset handler from use1v1Lol3DGame, which should reset gamePhase to 'idle' (returning to difficulty selection), reset HP, ammo, and all game state. Ensure difficulty selection screen is shown when gamePhase is 'idle'."
         }
       ]
     }

@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-core-2d-platformer-mechanics-in-useovogame-ts-including-smooth-running-jumping-wall-jumping-sliding-coyote-time-and-gravity-based-physics-for-the-player-character",
-      "featureTitle": "Implement core 2D platformer mechanics in useOvoGame.ts including smooth running, jumping, wall-jumping, sliding, coyote time, and gravity-based physics for the player character.",
+      "featureId": "feature-create-a-new-react-three-fiber-three-js-game-hook-use1v1lol3dgame-ts-that-implements-a-3d-first-person-third-person-1v1-battle-game-the-hook-must-manage-player-state-position-hp-current-weapon-ammo-ai-bot-state-position-hp-current-weapon-ammo-difficulty-projectile-physics-and-collision-detection-in-a-3d-arena",
+      "featureTitle": "Create a new React Three Fiber / Three.js game hook `use1v1Lol3DGame.ts` that implements a 3D first-person/third-person 1v1 battle game. The hook must manage: player state (position, HP, current weapon, ammo), AI bot state (position, HP, current weapon, ammo, difficulty), projectile physics, and collision detection in a 3D arena.",
       "files": [
-        "frontend/src/hooks/useOvoGame.ts"
+        "frontend/src/hooks/use1v1Lol3DGame.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -21,10 +21,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-design-and-implement-at-least-10-platformer-levels-in-useovogame-ts-with-increasing-difficulty-varied-platform-layouts-hazards-gaps-and-moving-platforms",
-      "featureTitle": "Design and implement at least 10 platformer levels in useOvoGame.ts with increasing difficulty, varied platform layouts, hazards, gaps, and moving platforms.",
+      "featureId": "feature-implement-four-weapons-in-the-game-hook-switchable-via-number-keys-1-4-sniper-1-bullet-slow-reload-2-5s-high-damage-80-shotgun-5-shots-medium-reload-1-5s-spread-pattern-medium-damage-15-per-pellet-6-pellets-pistol-20-shots-fast-reload-0-8s-medium-damage-25-machine-gun-25-bullets-medium-reload-1-2s-rapid-fire-lower-damage-12-per-bullet-each-weapon-tracks-current-ammo-and-reload-state",
+      "featureTitle": "Implement four weapons in the game hook, switchable via number keys 1–4: Sniper (1 bullet, slow reload ~2.5s, high damage ~80), Shotgun (5 shots, medium reload ~1.5s, spread pattern, medium damage ~15 per pellet × 6 pellets), Pistol (20 shots, fast reload ~0.8s, medium damage ~25), Machine Gun (25 bullets, medium reload ~1.2s, rapid fire, lower damage ~12 per bullet). Each weapon tracks current ammo and reload state.",
       "files": [
-        "frontend/src/hooks/useOvoGame.ts"
+        "frontend/src/hooks/use1v1Lol3DGame.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -40,10 +40,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-portal-objects-in-useovogame-ts-that-when-the-player-touches-them-teleport-the-player-to-a-specified-target-position-within-the-same-level-or-to-the-start-of-a-specified-level",
-      "featureTitle": "Implement portal objects in useOvoGame.ts that, when the player touches them, teleport the player to a specified target position within the same level or to the start of a specified level.",
+      "featureId": "feature-implement-four-ai-difficulty-levels-easy-medium-hard-extreme-that-scale-by-reaction-time-and-accuracy-easy-1500ms-reaction-delay-40-accuracy-medium-800ms-reaction-60-accuracy-hard-350ms-reaction-80-accuracy-extreme-80ms-reaction-95-accuracy-the-ai-bot-dynamically-switches-weapons-based-on-distance-to-player-sniper-at-long-range-shotgun-at-close-range-pistol-machine-gun-at-medium-range-with-weapon-switching-thresholds-scaled-by-difficulty-player-selects-difficulty-on-a-pre-game-screen",
+      "featureTitle": "Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) that scale by reaction time and accuracy. Easy: 1500ms reaction delay, 40% accuracy. Medium: 800ms reaction, 60% accuracy. Hard: 350ms reaction, 80% accuracy. Extreme: 80ms reaction, 95% accuracy. The AI bot dynamically switches weapons based on distance to player (Sniper at long range, Shotgun at close range, Pistol/Machine Gun at medium range) with weapon switching thresholds scaled by difficulty. Player selects difficulty on a pre-game screen.",
       "files": [
-        "frontend/src/hooks/useOvoGame.ts"
+        "frontend/src/hooks/use1v1Lol3DGame.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -59,10 +59,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-a-level-exit-end-goal-in-each-level-in-useovogame-ts-when-the-player-reaches-the-exit-they-progress-to-the-next-level-after-the-final-level-the-game-is-considered-complete-and-the-score-time-elapsed-is-submitted",
-      "featureTitle": "Implement a level exit/end goal in each level in useOvoGame.ts. When the player reaches the exit, they progress to the next level. After the final level, the game is considered complete and the score (time elapsed) is submitted.",
+      "featureId": "feature-build-a-3d-arena-scene-in-the-page-component-onelolgame-tsx-using-react-three-fiber-the-arena-should-include-a-flat-ground-plane-perimeter-walls-and-several-cover-obstacles-boxes-pillars-scattered-around-use-pointer-lock-controls-or-orbit-style-wasd-movement-so-the-player-can-navigate-the-arena-in-3d-render-the-ai-bot-as-a-visible-3d-mesh-that-moves-around-the-arena-display-projectile-meshes-small-spheres-or-cylinders-that-travel-through-the-scene",
+      "featureTitle": "Build a 3D arena scene in the page component `OneLolGame.tsx` using React Three Fiber. The arena should include a flat ground plane, perimeter walls, and several cover obstacles (boxes/pillars) scattered around. Use pointer-lock controls or orbit-style WASD movement so the player can navigate the arena in 3D. Render the AI bot as a visible 3D mesh that moves around the arena. Display projectile meshes (small spheres or cylinders) that travel through the scene.",
       "files": [
-        "frontend/src/hooks/useOvoGame.ts"
+        "frontend/src/pages/OneLolGame.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -78,10 +78,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-ovogame-tsx-to-render-portals-on-the-canvas-with-a-visually-distinctive-animated-appearance-e-g-pulsing-glow-or-swirl-display-the-current-level-number-and-show-a-game-complete-screen-with-score-submission-and-leaderboard-when-all-levels-are-finished",
-      "featureTitle": "Update OvoGame.tsx to render portals on the canvas with a visually distinctive animated appearance (e.g., pulsing glow or swirl), display the current level number, and show a game-complete screen with score submission and leaderboard when all levels are finished.",
+      "featureId": "feature-add-an-in-game-hud-overlaid-on-the-3d-canvas-showing-player-hp-bar-ai-bot-hp-bar-current-weapon-name-and-ammo-e-g-pistol-18-20-reload-progress-bar-when-reloading-selected-difficulty-label-and-a-crosshair-in-the-center-of-the-screen",
+      "featureTitle": "Add an in-game HUD overlaid on the 3D canvas showing: player HP bar, AI bot HP bar, current weapon name and ammo (e.g. 'Pistol 18/20'), reload progress bar when reloading, selected difficulty label, and a crosshair in the center of the screen.",
       "files": [
-        "frontend/src/pages/OvoGame.tsx"
+        "frontend/src/pages/OneLolGame.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -93,6 +93,25 @@
       ],
       "testIds": [
         "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-show-a-game-over-screen-when-either-the-player-or-ai-bot-reaches-0-hp-display-who-won-the-match-result-and-a-play-again-button-that-resets-the-game-returning-to-difficulty-selection-integrate-score-submission-using-the-existing-scoresubmission-component-when-the-player-wins",
+      "featureTitle": "Show a game-over screen when either the player or AI bot reaches 0 HP. Display who won, the match result, and a 'Play Again' button that resets the game (returning to difficulty selection). Integrate score submission using the existing ScoreSubmission component when the player wins.",
+      "files": [
+        "frontend/src/pages/OneLolGame.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

@@ -1,13 +1,15 @@
 # Specification
 
 ## Summary
-**Goal:** Build a 2D platformer game (OVO) with multiple levels, portals, and level progression directly in the existing OvoGame files.
+**Goal:** Add a 3D first-person 1v1 FPS battle game to the Arcade Hub with four weapons, four AI difficulty levels, and a full in-game HUD.
 
 **Planned changes:**
-- Implement core 2D platformer physics in `useOvoGame.ts`: smooth running, jumping, wall-jumping, wall-sliding, coyote time, and gravity
-- Design at least 10 levels with increasing difficulty, varied platform layouts, hazards, gaps, and moving platforms
-- Add portal objects to level definitions that teleport the player to a target position or a different level when touched
-- Add a level exit/goal object to each level; reaching it progresses the player to the next level, and completing the final level triggers game-complete with elapsed time as score
-- Update `OvoGame.tsx` to render portals with an animated visual effect (pulsing glow or swirl), display the current level number in the HUD, and show a game-complete overlay with score submission and leaderboard
+- Create `use1v1Lol3DGame.ts` hook managing player state, AI bot state, projectile physics, collision detection, and a requestAnimationFrame game loop
+- Implement four weapons (Sniper, Shotgun, Pistol, Machine Gun) switchable via keys 1–4, each with unique ammo capacity, reload time, and damage values
+- Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) with scaled reaction time and accuracy; AI dynamically switches weapons based on distance to player
+- Build `OneLolGame.tsx` page using React Three Fiber with a 3D arena (ground, perimeter walls, 6+ cover obstacles), WASD + mouse pointer-lock controls, a visible AI bot mesh, and visible projectile meshes
+- Add an in-game HUD overlay showing player HP bar, bot HP bar, current weapon + ammo, reload progress bar, crosshair, and difficulty label
+- Add a difficulty selection screen before the match starts
+- Add a game-over screen showing win/loss result, a "Play Again" button returning to difficulty selection, and score submission + leaderboard on win (reusing existing components)
 
-**User-visible outcome:** Players can run through 10+ platformer levels, use portals to teleport, and reach the exit to advance. After completing all levels, a game-complete screen shows their time and allows score submission to the leaderboard.
+**User-visible outcome:** Players can select a difficulty, enter a 3D arena, move and aim with mouse/keyboard, switch between four weapons, and battle an AI opponent until one side reaches 0 HP, then view results and submit their score.
