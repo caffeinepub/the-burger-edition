@@ -1,12 +1,13 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 17,
-  "summary": "A multi-game platform website featuring classic browser games (Snake, Tic-Tac-Toe, Memory Match, Stickman Archers, OvO, Super Mario, Pokémon, Slope, 1v1.lol, Minecraft Classic, Retro Bowl, Among Us, Five Nights at Freddy's, Rocket Soccer League, Football Bros) with a game lobby, score tracking, and polished UI using React and Tailwind CSS. Football Bros uses an embedded iframe pointing to footballbros.io instead of a custom 3D implementation.",
+  "projectStateVersion": 23,
+  "summary": "A multi-game platform website featuring classic browser games (Snake, Tic-Tac-Toe, Memory Match, Stickman Archers, OvO, Super Mario, Pokémon, Slope, 1v1.lol, Minecraft Classic (3D first-person voxel with monsters, survival bars, crafting, and XP), Retro Bowl, Among Us, Five Nights at Freddy's, Rocket Soccer League) with a game lobby, score tracking, and polished UI using React and Tailwind CSS. Football Bros has been removed from the platform entirely.",
   "architectural_notes": [
     "Frontend: React with Tailwind CSS",
     "Multi-game platform with shared lobby and score tracking",
     "React Three Fiber / Three.js used for 3D games (Slope, Rocket Soccer League)",
-    "Football Bros game page embeds footballbros.io via iframe instead of a custom React Three Fiber implementation"
+    "Minecraft Classic uses React Three Fiber first-person voxel renderer with pointer lock controls",
+    "Minecraft Classic 3D survival mechanics: health/hunger/stamina/XP bars, mob spawning, crafting system, no starting inventory"
   ],
   "known_issues": [],
   "isFixRequest": false,
@@ -339,6 +340,118 @@
         "REQ-42"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-delete-the-file-frontend-src-pages-footballbrosgame-tsx-entirely-removing-the-football-bros-game-page-from-the-project",
+      "title": "Delete the file `frontend/src/pages/FootballBrosGame.tsx` entirely, removing the Football Bros game page from the project.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-football-bros-route-from-frontend-src-app-tsx-delete-the-route-definition-and-any-import-of-footballbrosgame-from-the-tanstack-router-configuration",
+      "title": "Remove the `/football-bros` route from `frontend/src/App.tsx`. Delete the route definition and any import of `FootballBrosGame` from the TanStack Router configuration.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-football-bros-game-card-from-the-game-lobby-grid-in-frontend-src-pages-gamelobby-tsx-delete-the-card-entry-title-description-and-play-button-linking-to-football-bros-while-leaving-all-other-game-cards-intact",
+      "title": "Remove the Football Bros game card from the game lobby grid in `frontend/src/pages/GameLobby.tsx`. Delete the card entry (title, description, and Play button linking to `/football-bros`) while leaving all other game cards intact.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-football-bros-navigation-link-from-frontend-src-components-layout-tsx-delete-the-football-bros-link-from-both-the-desktop-nav-and-the-mobile-hamburger-menu-leaving-all-other-navigation-links-intact",
+      "title": "Remove the Football Bros navigation link from `frontend/src/components/Layout.tsx`. Delete the `/football-bros` link from both the desktop nav and the mobile hamburger menu, leaving all other navigation links intact.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-game-hook-frontend-src-hooks-useminecraftclassic3dgame-ts-that-implements-the-core-3d-first-person-minecraft-voxel-game-logic-the-hook-must-manage-a-3d-voxel-world-at-minimum-32-8-32-chunks-procedurally-generated-with-terrain-layers-grass-on-top-dirt-below-stone-deeper-bedrock-at-bottom-with-some-wood-log-blocks-and-sand-patches-a-block-registry-with-at-least-6-block-types-grass-dirt-stone-wood-log-sand-bedrock-raycasting-from-the-camera-to-detect-which-block-face-the-player-is-targeting-for-mining-and-placement-left-click-to-mine-remove-the-targeted-block-right-click-to-place-the-currently-selected-hotbar-block-on-the-targeted-face-a-hotbar-with-6-block-type-slots-player-position-and-velocity-state-for-physics-gravity-jumping-expose-all-necessary-state-and-callbacks-for-the-3d-page-component-to-consume",
+      "title": "Create a new game hook `frontend/src/hooks/useMinecraftClassic3DGame.ts` that implements the core 3D first-person Minecraft voxel game logic. The hook must manage: a 3D voxel world (at minimum 32×8×32 chunks) procedurally generated with terrain layers (grass on top, dirt below, stone deeper, bedrock at bottom, with some wood/log blocks and sand patches); a block registry with at least 6 block types (grass, dirt, stone, wood/log, sand, bedrock); raycasting from the camera to detect which block face the player is targeting (for mining and placement); left-click to mine/remove the targeted block; right-click to place the currently selected hotbar block on the targeted face; a hotbar with 6 block-type slots; player position and velocity state for physics (gravity, jumping). Expose all necessary state and callbacks for the 3D page component to consume.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-content-of-frontend-src-pages-minecraftclassicgame-tsx-with-a-fully-3d-first-person-voxel-game-rendered-using-react-three-fiber-three-js-remove-all-existing-2d-canvas-rendering-code-and-references-to-useminecraftclassicgame-the-new-page-must-use-react-three-fiber-s-canvas-filling-the-full-viewport-height-implement-a-first-person-camera-with-pointer-lock-controls-click-to-lock-escape-to-unlock-render-the-voxel-world-as-instanced-or-individual-box-meshes-with-distinct-neon-tinted-materials-per-block-type-consistent-with-the-retro-arcade-neon-theme-support-wasd-movement-forward-backward-strafe-space-to-jump-mouse-movement-to-look-around-support-left-click-to-mine-the-targeted-block-highlight-the-targeted-block-face-with-a-neon-outline-support-right-click-to-place-the-selected-hotbar-block-on-the-targeted-face-display-a-hotbar-hud-overlay-at-the-bottom-of-the-screen-showing-the-6-block-types-with-the-selected-slot-highlighted-in-neon-display-a-crosshair-at-the-center-of-the-screen-drive-all-game-logic-from-the-new-useminecraftclassic3dgame-hook-style-all-hud-elements-hotbar-crosshair-pointer-lock-overlay-with-the-existing-retro-neon-arcade-theme",
+      "title": "Replace the content of `frontend/src/pages/MinecraftClassicGame.tsx` with a fully 3D first-person voxel game rendered using React Three Fiber / Three.js. Remove all existing 2D canvas rendering code and references to `useMinecraftClassicGame`. The new page must: use React Three Fiber's `<Canvas>` filling the full viewport height; implement a first-person camera with pointer lock controls (click to lock, Escape to unlock); render the voxel world as instanced or individual box meshes with distinct neon-tinted materials per block type (consistent with the retro arcade neon theme); support WASD movement (forward/backward/strafe), Space to jump, mouse movement to look around; support left-click to mine the targeted block (highlight the targeted block face with a neon outline); support right-click to place the selected hotbar block on the targeted face; display a hotbar HUD overlay at the bottom of the screen showing the 6 block types with the selected slot highlighted in neon; display a crosshair at the center of the screen. Drive all game logic from the new `useMinecraftClassic3DGame` hook. Style all HUD elements (hotbar, crosshair, pointer-lock overlay) with the existing retro neon arcade theme.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-frontend-src-hooks-useminecraftclassic3dgame-ts-to-include-three-classic-mob-types-zombie-melee-chaser-skeleton-ranged-shoots-arrows-and-spider-fast-erratic-movement-mobs-spawn-procedurally-at-a-configurable-distance-from-the-player-e-g-10-20-blocks-away-and-respawn-over-time-each-mob-has-hp-a-simple-pathfinding-chase-behaviour-toward-the-player-and-an-attack-that-reduces-the-player-s-health-on-contact-or-when-a-skeleton-arrow-hits-expose-mob-state-position-type-hp-alive-in-the-hook-s-returned-state-object-so-the-3d-scene-can-render-them",
+      "title": "Extend `frontend/src/hooks/useMinecraftClassic3DGame.ts` to include three classic mob types — Zombie (melee chaser), Skeleton (ranged, shoots arrows), and Spider (fast, erratic movement). Mobs spawn procedurally at a configurable distance from the player (e.g., 10–20 blocks away) and respawn over time. Each mob has HP, a simple pathfinding/chase behaviour toward the player, and an attack that reduces the player's health on contact (or when a skeleton arrow hits). Expose mob state (position, type, HP, alive) in the hook's returned state object so the 3D scene can render them.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-render-the-three-mob-types-as-distinct-3d-meshes-in-frontend-src-pages-minecraftclassicgame-tsx-using-react-three-fiber-zombies-green-box-figure-skeletons-white-grey-thin-box-figure-spiders-dark-grey-low-profile-wider-mesh-mobs-must-visually-move-toward-the-player-each-frame-driven-by-the-hook-s-mob-state-skeleton-arrows-must-also-be-rendered-as-small-elongated-meshes-travelling-toward-the-player",
+      "title": "Render the three mob types as distinct 3D meshes in `frontend/src/pages/MinecraftClassicGame.tsx` using React Three Fiber. Zombies: green box-figure; Skeletons: white/grey thin box-figure; Spiders: dark grey low-profile wider mesh. Mobs must visually move toward the player each frame driven by the hook's mob state. Skeleton arrows must also be rendered as small elongated meshes travelling toward the player.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-player-survival-stats-to-frontend-src-hooks-useminecraftclassic3dgame-ts-1-health-0-20-hp-reduced-by-mob-attacks-when-it-reaches-0-the-player-respawns-at-world-origin-with-an-empty-inventory-2-hunger-0-20-drains-at-a-slow-constant-rate-over-time-when-empty-health-decreases-steadily-until-food-is-consumed-3-stamina-0-100-depletes-while-sprinting-holding-shift-or-attacking-a-mob-regenerates-automatically-when-the-player-is-idle-or-walking-at-normal-speed-expose-all-three-values-from-the-hook",
+      "title": "Add player survival stats to `frontend/src/hooks/useMinecraftClassic3DGame.ts`: (1) Health (0–20 HP) — reduced by mob attacks; when it reaches 0, the player respawns at world origin with an empty inventory. (2) Hunger (0–20) — drains at a slow constant rate over time; when empty, health decreases steadily until food is consumed. (3) Stamina (0–100) — depletes while sprinting (holding Shift) or attacking a mob; regenerates automatically when the player is idle or walking at normal speed. Expose all three values from the hook.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-hud-overlay-to-frontend-src-pages-minecraftclassicgame-tsx-displaying-three-survival-bars-health-red-hunger-orange-yellow-and-stamina-cyan-green-positioned-at-the-bottom-of-the-screen-above-the-hotbar-each-bar-should-be-labelled-with-an-icon-or-short-text-hp-hunger-stamina-and-a-numeric-value-style-consistently-with-the-existing-retro-neon-arcade-theme-neon-glow-dark-background-pill-the-bars-update-in-real-time-from-hook-state",
+      "title": "Add a HUD overlay to `frontend/src/pages/MinecraftClassicGame.tsx` displaying three survival bars — Health (red), Hunger (orange/yellow), and Stamina (cyan/green) — positioned at the bottom of the screen above the hotbar. Each bar should be labelled with an icon or short text (❤️ HP, 🍖 Hunger, ⚡ Stamina) and a numeric value. Style consistently with the existing retro neon arcade theme (neon glow, dark background pill). The bars update in real time from hook state.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-food-and-crafting-system-to-frontend-src-hooks-useminecraftclassic3dgame-ts-the-player-starts-with-an-empty-inventory-no-items-no-tools-food-items-e-g-apple-bread-cooked-meat-can-be-crafted-from-gathered-resources-e-g-wood-stone-wooden-pickaxe-wheat-crop-drops-bread-define-a-basic-crafting-recipe-table-with-at-least-wooden-pickaxe-2-wood-apple-drops-randomly-from-leaf-wood-blocks-bread-3-wood-or-crop-items-as-placeholder-consuming-food-restores-hunger-mining-efficiency-for-stone-blocks-requires-at-least-a-wooden-pickaxe-bare-hand-mining-of-hard-blocks-stone-bedrock-should-be-very-slow-or-ineffective-expose-inventory-contents-crafting-recipes-and-a-craftitem-recipe-callback-from-the-hook",
+      "title": "Add a food and crafting system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player starts with an empty inventory (no items, no tools). Food items (e.g., Apple, Bread, Cooked Meat) can be crafted from gathered resources (e.g., Wood + Stone → Wooden Pickaxe; Wheat/crop drops → Bread). Define a basic crafting recipe table with at least: Wooden Pickaxe (2 wood), Apple (drops randomly from leaf/wood blocks), Bread (3 wood or crop items as placeholder). Consuming food restores Hunger. Mining efficiency for stone blocks requires at least a Wooden Pickaxe — bare-hand mining of hard blocks (stone, bedrock) should be very slow or ineffective. Expose inventory contents, crafting recipes, and a `craftItem(recipe)` callback from the hook.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-basic-crafting-ui-panel-to-frontend-src-pages-minecraftclassicgame-tsx-that-opens-when-the-player-presses-e-the-panel-lists-available-crafting-recipes-shows-the-required-ingredients-and-whether-the-player-has-enough-materials-and-provides-a-craft-button-for-each-recipe-close-the-panel-with-e-or-escape-style-consistently-with-the-retro-neon-arcade-theme-dark-modal-neon-borders-glowing-buttons",
+      "title": "Add a basic crafting UI panel to `frontend/src/pages/MinecraftClassicGame.tsx` that opens when the player presses `E`. The panel lists available crafting recipes, shows the required ingredients and whether the player has enough materials, and provides a 'Craft' button for each recipe. Close the panel with `E` or `Escape`. Style consistently with the retro neon arcade theme (dark modal, neon borders, glowing buttons).",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-experience-xp-system-to-frontend-src-hooks-useminecraftclassic3dgame-ts-the-player-s-xp-increases-when-a-a-diamond-block-is-mined-10-xp-per-block-or-b-a-mob-is-killed-5-xp-for-zombie-7-xp-for-skeleton-6-xp-for-spider-each-level-requires-100-xp-when-the-bar-fills-100-xp-the-level-increments-and-the-bar-resets-to-0-expose-xp-xptonextlevel-always-100-and-level-from-the-hook",
+      "title": "Add an Experience (XP) system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player's XP increases when: (a) a diamond block is mined (+10 XP per block), or (b) a mob is killed (+5 XP for Zombie, +7 XP for Skeleton, +6 XP for Spider). Each level requires 100 XP. When the bar fills (100 XP), the level increments and the bar resets to 0. Expose `xp`, `xpToNextLevel` (always 100), and `level` from the hook.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-xp-bar-to-the-hud-overlay-in-frontend-src-pages-minecraftclassicgame-tsx-display-it-as-a-green-yellow-neon-progress-bar-labelled-with-xp-and-the-current-level-e-g-level-3-position-it-alongside-the-health-hunger-and-stamina-bars-in-the-bottom-hud-area-the-bar-fills-based-on-current-xp-xptonextlevel-and-resets-visually-when-a-new-level-is-reached-style-consistently-with-the-existing-retro-neon-arcade-theme",
+      "title": "Add an XP bar to the HUD overlay in `frontend/src/pages/MinecraftClassicGame.tsx`. Display it as a green/yellow neon progress bar labelled with '⭐ XP' and the current level (e.g., 'Level 3'). Position it alongside the Health, Hunger, and Stamina bars in the bottom HUD area. The bar fills based on current XP / xpToNextLevel and resets visually when a new level is reached. Style consistently with the existing retro neon arcade theme.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -409,12 +522,6 @@
       "status": "pending"
     },
     {
-      "id": "AR-12",
-      "summary": "Add Minecraft Classic 2D block-placing/mining inspired game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
       "id": "AR-13",
       "summary": "Add Retro Bowl simplified American football game",
       "reqIds": [],
@@ -439,8 +546,40 @@
       "status": "pending"
     },
     {
-      "id": "AR-17",
-      "summary": "Add Football Bros 3D arcade football game using React Three Fiber at /football-bros with top-down 3D arena, player vs AI, running/tackling/touchdown mechanics, leaderboard integration, and lobby card",
+      "id": "AR-18",
+      "summary": "Delete the file `frontend/src/hooks/useFootballBrosGame.ts` entirely, removing the unused Football Bros game hook from the project.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Upgrade Minecraft Classic to full 3D first-person voxel game using React Three Fiber with pointer-lock camera, WASD movement, jump, left-click mining, right-click block placement, hotbar inventory, and multiple block types (dirt, grass, stone, wood, sand)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Add classic mobs (zombie, skeleton, spider) to Minecraft Classic 3D that spawn procedurally around the player and attack on sight",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Add health, hunger, and stamina HUD bars to Minecraft Classic 3D: hunger drains over time and reduces health when empty; stamina depletes on sprint/attack and regenerates when idle; death respawns player at origin with no items",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Add food and crafting system to Minecraft Classic 3D: no starting inventory, player must mine/gather materials, craft tools and food (apples, bread, cooked meat) from gathered resources",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Add XP bar to Minecraft Classic 3D HUD that fills when mining diamond blocks or killing mobs, showing current level when bar fills",
       "reqIds": [],
       "status": "pending"
     }

@@ -15,7 +15,6 @@ import RetroBowlGame from './pages/RetroBowlGame';
 import AmongUsGame from './pages/AmongUsGame';
 import FnafGame from './pages/FnafGame';
 import RocketSoccerLeagueGame from './pages/RocketSoccerLeagueGame';
-import FootballBrosGame from './pages/FootballBrosGame';
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -115,12 +114,6 @@ const rocketSoccerLeagueRoute = createRoute({
   component: RocketSoccerLeagueGame,
 });
 
-const footballBrosRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/football-bros',
-  component: FootballBrosGame,
-});
-
 const routeTree = rootRoute.addChildren([
   lobbyRoute,
   snakeRoute,
@@ -137,7 +130,6 @@ const routeTree = rootRoute.addChildren([
   amongUsRoute,
   fnafRoute,
   rocketSoccerLeagueRoute,
-  footballBrosRoute,
 ]);
 
 const router = createRouter({ routeTree });

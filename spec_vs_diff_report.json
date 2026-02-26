@@ -1,32 +1,46 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T18:49:45.049Z",
-  "summary": "REQ-41 is largely implemented: FootballBrosGame.tsx now renders an iframe with src='https://footballbros.io', no Three.js/React Three Fiber canvas, retro neon heading retained, and Leaderboard present. However ScoreSubmission is missing. REQ-42 is only partially satisfied: the file useFootballBrosGame.ts still exists as a modified file rather than being removed.",
+  "generatedAt": "2026-02-25T19:52:23.903Z",
+  "summary": "The diff modifies the two required files (useMinecraftClassic3DGame.ts and MinecraftClassicGame.tsx) and appears to implement the majority of the requested features. However, due to truncation of both files, several acceptance criteria cannot be fully verified. Based on what is visible, most core structures are present (mob types, inventory, crafting recipes, survival stats interfaces), but some specific ACs cannot be confirmed from the truncated content. One notable gap from the visible diff is the crafting recipe for Apple (only Wooden Pickaxe, Stone Pickaxe, Bread, Cooked Meat, and Wooden Sword are visible). The Wooden Pickaxe recipe uses 3 wood rather than 2 as specified.",
   "missing_requirements": [
     {
-      "id": "REQ-42",
-      "requirement": "Remove the `useFootballBrosGame` hook file at `frontend/src/hooks/useFootballBrosGame.ts` since it is no longer used by the iframe-based Football Bros page.",
-      "reason": "The diff shows `frontend/src/hooks/useFootballBrosGame.ts` as a MODIFIED file, not a REMOVED file. The file still exists, violating the AC that it no longer exists or is empty.",
+      "id": "REQ-54",
+      "requirement": "At least 3 crafting recipes exist including Apple (drops randomly from leaf/wood blocks). Wooden Pickaxe recipe should require 2 wood.",
+      "reason": "The visible CRAFTING_RECIPES array shows Wooden Pickaxe requiring 3 wood (not 2 as specified) and no Apple recipe is present among the five visible recipes.",
       "evidence": [
-        "frontend/src/hooks/useFootballBrosGame.ts"
-      ]
-    },
-    {
-      "id": "REQ-41",
-      "requirement": "The Leaderboard and ScoreSubmission components remain present below the iframe, consistent with other game pages.",
-      "reason": "The updated FootballBrosGame.tsx includes a Leaderboard component but does not include a ScoreSubmission component, which is required by the acceptance criteria.",
-      "evidence": [
-        "frontend/src/pages/FootballBrosGame.tsx"
+        "frontend/src/hooks/useMinecraftClassic3DGame.ts"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.82,
+  "hallucinated_features": [
+    {
+      "description": "Stone Pickaxe crafting recipe requiring 3 stone and 2 wood",
+      "reason": "The spec only requires at least 3 recipes (Wooden Pickaxe, Apple, Bread). A Stone Pickaxe recipe was added but not requested in the spec.",
+      "evidence": [
+        "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+      ]
+    },
+    {
+      "description": "Wooden Sword crafting recipe requiring 2 wood",
+      "reason": "The spec does not mention a Wooden Sword recipe anywhere in the requirements.",
+      "evidence": [
+        "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+      ]
+    },
+    {
+      "description": "Cooked Meat crafting recipe requiring raw_meat item",
+      "reason": "While Cooked Meat is mentioned as an example food item, the spec does not define raw_meat as a droppable resource nor specify a Cooked Meat recipe with raw_meat as ingredient in the required recipe table.",
+      "evidence": [
+        "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+      ]
+    }
+  ],
+  "confidence": 0.45,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/hooks/useFootballBrosGame.ts",
-    "frontend/src/pages/FootballBrosGame.tsx",
+    "frontend/src/hooks/useMinecraftClassic3DGame.ts",
+    "frontend/src/pages/MinecraftClassicGame.tsx",
     "project_state.json"
   ]
 }

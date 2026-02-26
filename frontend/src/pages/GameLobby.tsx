@@ -199,20 +199,17 @@ const games = [
     tag: '3D SPORTS',
     emoji: '🚗',
   },
-  {
-    id: 'football-bros',
-    title: 'FOOTBALL BROS',
-    description: '3D arcade football — carry the ball, dodge tackles, and score touchdowns against the AI!',
-    icon: null,
-    route: '/football-bros',
-    accentClass: 'text-neon-green',
-    borderClass: 'border-neon-green/40 hover:border-neon-green',
-    glowClass: 'hover:shadow-neon-green',
-    badgeClass: 'bg-neon-green/10 text-neon-green',
-    btnClass: 'btn-neon-green',
-    tag: '3D FOOTBALL',
-    emoji: '🏈',
-  },
+];
+
+const leaderboards = [
+  { game: 'snake', title: 'SNAKE', accentColor: 'neon-green' as const },
+  { game: 'memory-match', title: 'MEMORY MATCH', accentColor: 'neon-yellow' as const, lowerIsBetter: true },
+  { game: 'ovo', title: 'OvO SPEED RUN', accentColor: 'neon-cyan' as const, lowerIsBetter: true },
+  { game: 'slope', title: 'SLOPE', accentColor: 'neon-green' as const },
+  { game: 'retro-bowl', title: 'RETRO BOWL', accentColor: 'neon-yellow' as const },
+  { game: 'among-us', title: 'AMONG US', accentColor: 'neon-cyan' as const },
+  { game: 'fnaf', title: 'FNAF', accentColor: 'neon-pink' as const },
+  { game: 'rocket-soccer-league', title: 'ROCKET SOCCER', accentColor: 'neon-cyan' as const },
 ];
 
 export default function GameLobby() {
@@ -262,24 +259,19 @@ export default function GameLobby() {
                   <img
                     src={game.icon}
                     alt={game.title}
-                    className="w-20 h-20 object-contain rounded-lg"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
+                    className="w-16 h-16 object-contain pixelated"
                   />
                 ) : (
-                  <div className={`w-20 h-20 flex items-center justify-center rounded-lg border-2 ${game.borderClass} ${game.accentClass}`}>
-                    <span className="text-4xl">{game.emoji}</span>
-                  </div>
+                  <span className="text-5xl">{game.emoji}</span>
                 )}
               </div>
 
               {/* Content */}
-              <div className="px-5 pb-6">
-                <h3 className={`font-pixel text-xs ${game.accentClass} mb-2 tracking-wider leading-relaxed`}>
+              <div className="px-4 pb-5">
+                <h3 className={`font-pixel text-sm ${game.accentClass} mb-2 tracking-wider leading-relaxed`}>
                   {game.title}
                 </h3>
-                <p className="text-arcade-muted text-sm leading-relaxed mb-4">
+                <p className="font-pixel text-[10px] text-arcade-muted leading-relaxed mb-4 tracking-wide">
                   {game.description}
                 </p>
                 <button
@@ -289,7 +281,7 @@ export default function GameLobby() {
                     navigate({ to: game.route });
                   }}
                 >
-                  PLAY
+                  PLAY NOW
                 </button>
               </div>
             </div>
@@ -301,18 +293,18 @@ export default function GameLobby() {
       <section>
         <div className="flex items-center gap-3 mb-6">
           <Trophy className="w-5 h-5 text-neon-yellow" />
-          <h2 className="font-pixel text-lg text-arcade-text tracking-widest">LEADERBOARDS</h2>
+          <h2 className="font-pixel text-lg text-arcade-text tracking-widest">HALL OF FAME</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <Leaderboard game="snake" title="🐍 SNAKE" accentColor="neon-green" />
-          <Leaderboard game="memory-match" title="🃏 MEMORY MATCH" accentColor="neon-yellow" />
-          <Leaderboard game="ovo" title="⚡ OvO" accentColor="neon-cyan" lowerIsBetter />
-          <Leaderboard game="stickman-archers" title="🏹 ARCHERS" accentColor="neon-cyan" />
-          <Leaderboard game="retro-bowl" title="🏈 RETRO BOWL" accentColor="neon-yellow" />
-          <Leaderboard game="among-us" title="🚀 AMONG US" accentColor="neon-cyan" />
-          <Leaderboard game="fnaf" title="🐻 FNAF" accentColor="neon-pink" />
-          <Leaderboard game="rocket-soccer-league" title="🚗 ROCKET SOCCER" accentColor="neon-cyan" />
-          <Leaderboard game="football-bros" title="🏈 FOOTBALL BROS" accentColor="neon-green" />
+          {leaderboards.map((lb) => (
+            <Leaderboard
+              key={lb.game}
+              game={lb.game}
+              title={lb.title}
+              accentColor={lb.accentColor}
+              lowerIsBetter={lb.lowerIsBetter}
+            />
+          ))}
         </div>
       </section>
     </div>

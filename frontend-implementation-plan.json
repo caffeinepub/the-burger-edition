@@ -1,39 +1,151 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Replace Football Bros game page with embedded footballbros.io iframe",
+  "title": "Add monsters, survival bars, crafting/food system, and XP bar to Minecraft Classic 3D",
   "requirements": [
     {
-      "id": "REQ-41",
-      "summary": "Replace the custom React Three Fiber 3D game in FootballBrosGame.tsx with a full-screen iframe embedding https://footballbros.io, keeping the retro arcade theme, page title, leaderboard, and score submission intact",
+      "id": "REQ-50",
+      "summary": "Add three classic mob types (Zombie, Skeleton, Spider) with procedural spawning, pathfinding, combat, and state exposure in the game hook",
       "acceptanceCriteria": [
-        "Navigating to /football-bros renders an iframe with src='https://footballbros.io' that fills the main content area.",
-        "The iframe has no visible border and is at least 600px tall.",
-        "No Three.js canvas, React Three Fiber Canvas, or useFootballBrosGame hook is rendered on this page.",
-        "The page retains the retro neon arcade heading/title for Football Bros.",
-        "The Leaderboard and ScoreSubmission components remain present below the iframe, consistent with other game pages."
+        "At least 3 mob types exist: Zombie (melee), Skeleton (ranged arrow), Spider (fast erratic).",
+        "Mobs spawn procedurally at a distance from the player position, not at the player's feet.",
+        "Each mob chases the player and deals damage on hit.",
+        "Mob state (position, type, HP, alive) is exposed from the hook for rendering.",
+        "Dead mobs are removed or hidden from the world."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/FootballBrosGame.tsx",
+          "path": "frontend/src/hooks/useMinecraftClassic3DGame.ts",
           "operation": "modify",
-          "description": "Replace the entire React Three Fiber Canvas and 3D game scene with a full-screen iframe element (src='https://footballbros.io'). Remove all imports and references to useFootballBrosGame, @react-three/fiber, and @react-three/drei. Keep the page structure with the retro neon arcade heading 'Football Bros', the iframe styled with min-height 600px or 100vh minus header (no border, full width), and the Leaderboard and ScoreSubmission components below the iframe. Maintain consistent spacing and neon theme styling matching other game pages."
+          "description": "Add mob types (Zombie, Skeleton, Spider) with distinct behaviors. Implement procedural mob spawning at 10-20 blocks from player position using a spawn timer. Add pathfinding logic that chases the player, with Zombie doing melee damage on contact, Skeleton shooting arrow projectiles at range, and Spider moving faster with erratic movement. Track mob state (id, type, position, HP, alive) in a mobs array managed via useRef. Implement mob attack logic that reduces player health. Expose mobs state via useState for rendering. Remove dead mobs (HP <= 0) from the active mobs array."
         }
       ]
     },
     {
-      "id": "REQ-42",
-      "summary": "Remove the unused useFootballBrosGame hook file since the Football Bros page now uses an iframe instead of custom game logic",
+      "id": "REQ-51",
+      "summary": "Render distinct 3D meshes for each mob type and skeleton arrows in the React Three Fiber scene",
       "acceptanceCriteria": [
-        "The file `frontend/src/hooks/useFootballBrosGame.ts` no longer exists or is empty.",
-        "No other file imports from `useFootballBrosGame`.",
-        "The application builds without errors after removal."
+        "Each mob type has a visually distinct 3D mesh rendered in the React Three Fiber scene.",
+        "Mob meshes move in real-time based on hook state.",
+        "Skeleton arrows are rendered as travelling projectile meshes.",
+        "Mobs disappear from the scene when their HP reaches 0."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useFootballBrosGame.ts",
-          "operation": "delete",
-          "description": "Delete the useFootballBrosGame.ts hook file as it is no longer used by the iframe-based Football Bros page. Verify no other files import from this hook before deletion."
+          "path": "frontend/src/pages/MinecraftClassicGame.tsx",
+          "operation": "modify",
+          "description": "Add mob rendering logic inside the React Three Fiber Canvas. For each mob in the mobs state array, render a distinct mesh: Zombies as green box-figure group (using multiple Box geometries for body/head/limbs with greenish material), Skeletons as white/grey thin box-figure, Spiders as dark grey low-profile wider mesh. Position each mob mesh using mob.position from hook state. For Skeleton mobs, also render arrow projectiles as small elongated Box meshes travelling toward the player, using arrow state exposed from the hook. Filter out mobs where alive is false to make dead mobs disappear from the scene."
+        }
+      ]
+    },
+    {
+      "id": "REQ-52",
+      "summary": "Implement player survival stats (Health, Hunger, Stamina) with game logic for damage, depletion, regeneration, and respawn",
+      "acceptanceCriteria": [
+        "Health bar decreases when mobs attack the player.",
+        "Reaching 0 health respawns the player at world origin with an empty inventory.",
+        "Hunger drains over time at a constant slow rate.",
+        "When hunger is at 0, health decreases over time.",
+        "Stamina depletes when sprinting (Shift held) and when attacking.",
+        "Stamina regenerates when the player is idle or walking.",
+        "All three values are exposed from the hook."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useMinecraftClassic3DGame.ts",
+          "operation": "modify",
+          "description": "Add player survival stats: health (0-20), hunger (0-20), stamina (0-100) tracked via useRef and exposed via useState. Reduce health when mobs attack the player (handled in mob attack logic). Implement hunger drain over time at a slow constant rate in the game loop. When hunger reaches 0, implement health drain over time. Implement stamina depletion when sprinting (Shift key held) or when the player attacks a mob, and stamina regeneration when idle or walking at normal speed. When health reaches 0, respawn the player at world origin (0, y, 0) and clear the inventory array. Expose health, hunger, stamina values from the hook."
+        }
+      ]
+    },
+    {
+      "id": "REQ-53",
+      "summary": "Add a HUD overlay displaying Health, Hunger, and Stamina bars with neon styling above the hotbar",
+      "acceptanceCriteria": [
+        "Three bars (Health, Hunger, Stamina) are visible in the HUD overlay.",
+        "Each bar has a distinct neon color and label.",
+        "Bar widths update in real time to reflect current values.",
+        "Bars are positioned above the hotbar without obscuring gameplay.",
+        "Styling matches the existing retro neon arcade theme."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/MinecraftClassicGame.tsx",
+          "operation": "modify",
+          "description": "Add a survival bars HUD overlay positioned above the existing hotbar. Create three horizontal progress bars: Health (red neon glow, ❤️ HP label), Hunger (orange/yellow neon glow, 🍖 Hunger label), Stamina (cyan/green neon glow, ⚡ Stamina label). Each bar displays the current numeric value alongside the label. Use inline styles or Tailwind classes with neon glow effects matching the existing arcade theme (dark background pill, neon border/glow). Position the bars container above the hotbar using absolute positioning. Update bar widths in real time based on health, hunger, and stamina values from the hook state."
+        }
+      ]
+    },
+    {
+      "id": "REQ-54",
+      "summary": "Implement food and crafting system with empty starting inventory, resource gathering, crafting recipes, and tool requirements for mining",
+      "acceptanceCriteria": [
+        "Player spawns with zero items in inventory.",
+        "Mining wood blocks drops wood items; mining stone drops stone items.",
+        "At least 3 crafting recipes exist (e.g., Wooden Pickaxe, Bread, Apple).",
+        "Consuming food restores Hunger.",
+        "Stone and harder blocks mine very slowly or not at all without the appropriate tool.",
+        "Inventory, recipes, and craftItem callback are exposed from the hook."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useMinecraftClassic3DGame.ts",
+          "operation": "modify",
+          "description": "Initialize inventory as an empty array (player spawns with nothing). Modify block mining logic to drop resource items (wood blocks drop wood items, stone blocks drop stone items, leaf blocks have a small chance to drop Apple items). Define a crafting recipe table with at least 3 recipes: Wooden Pickaxe (requires 2 wood), Bread (requires 3 wood or crop placeholder items), Apple (can drop from leaf/wood blocks randomly). Implement a craftItem(recipeId) function that checks if the player has sufficient ingredients, consumes them from inventory, and adds the crafted item. Add a consumeFood(foodItemId) function that removes a food item from inventory and restores hunger. Modify mining speed logic so stone blocks mine very slowly or are ineffective without a Wooden Pickaxe equipped. Expose inventory array, craftingRecipes array, craftItem callback, and consumeFood callback from the hook."
+        }
+      ]
+    },
+    {
+      "id": "REQ-55",
+      "summary": "Add a crafting UI panel that opens with E key, displays recipes, ingredient availability, and craft buttons",
+      "acceptanceCriteria": [
+        "Pressing E opens a crafting panel overlay.",
+        "All defined recipes are listed with required ingredients.",
+        "Recipes for which the player has sufficient materials show an active 'Craft' button.",
+        "Crafting consumes the required items from inventory and adds the crafted item.",
+        "Panel closes on pressing E or Escape.",
+        "Styling matches the retro neon arcade theme."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/MinecraftClassicGame.tsx",
+          "operation": "modify",
+          "description": "Add state to track crafting panel open/closed. Add a keyboard event listener for the E key that toggles the crafting panel. Render a modal overlay when the crafting panel is open, displaying all recipes from the hook's craftingRecipes array. For each recipe, show the recipe name, required ingredients with quantities, and current availability in the player's inventory. Display a 'Craft' button for each recipe that is enabled only if the player has sufficient materials, calling the craftItem callback on click. Add a close handler for E or Escape keys. Style the panel with a dark background modal, neon borders, glowing buttons, and consistent retro arcade theme using Tailwind classes and inline neon glow effects."
+        }
+      ]
+    },
+    {
+      "id": "REQ-56",
+      "summary": "Implement an Experience (XP) system that grants XP for mining diamonds and killing mobs, with level progression",
+      "acceptanceCriteria": [
+        "Mining a diamond block grants XP.",
+        "Killing any mob grants XP.",
+        "XP fills a 0–100 bar; reaching 100 increments the level and resets XP to 0.",
+        "xp, xpToNextLevel, and level are exposed from the hook."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useMinecraftClassic3DGame.ts",
+          "operation": "modify",
+          "description": "Add XP system state: xp (current XP, 0-100), level (player level, starts at 1), xpToNextLevel (always 100). In the block mining logic, when a diamond block is mined, grant +10 XP. In the mob kill logic, grant +5 XP for Zombie, +7 XP for Skeleton, +6 XP for Spider. Implement level-up logic: when xp reaches 100, increment level by 1 and reset xp to 0. Expose xp, xpToNextLevel, and level values from the hook."
+        }
+      ]
+    },
+    {
+      "id": "REQ-57",
+      "summary": "Add an XP bar to the HUD overlay showing current XP progress and level with neon styling",
+      "acceptanceCriteria": [
+        "XP bar is visible in the HUD overlay alongside the three survival bars.",
+        "Bar fill percentage accurately reflects current XP progress toward next level.",
+        "Current level number is displayed next to or above the bar.",
+        "Bar visually resets (animates back to 0) when levelling up.",
+        "Styling matches the retro neon arcade theme."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/MinecraftClassicGame.tsx",
+          "operation": "modify",
+          "description": "Add an XP bar to the HUD overlay positioned alongside the Health, Hunger, and Stamina bars in the bottom HUD area. Display a horizontal progress bar with green/yellow neon glow labeled '⭐ XP' and showing the current level number (e.g., 'Level 3'). Calculate bar fill width as (xp / xpToNextLevel) * 100%. Use CSS transitions on the bar width to create a smooth visual reset animation when the level increases and xp resets to 0. Style consistently with the existing retro neon arcade theme using dark background pill, neon borders, and glowing effects matching the other survival bars."
         }
       ]
     }
