@@ -1,197 +1,124 @@
 {
   "kind": "build_request",
-  "title": "Add monsters, survival bars, crafting/food system, and XP bar to Minecraft Classic 3D",
+  "title": "Build OVO 2D Platformer with Levels and Portals",
+  "projectName": "OVO Platformer",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-50",
-      "text": "Extend `frontend/src/hooks/useMinecraftClassic3DGame.ts` to include three classic mob types — Zombie (melee chaser), Skeleton (ranged, shoots arrows), and Spider (fast, erratic movement). Mobs spawn procedurally at a configurable distance from the player (e.g., 10–20 blocks away) and respawn over time. Each mob has HP, a simple pathfinding/chase behaviour toward the player, and an attack that reduces the player's health on contact (or when a skeleton arrow hits). Expose mob state (position, type, HP, alive) in the hook's returned state object so the 3D scene can render them.",
+      "id": "REQ-1",
+      "text": "Implement core 2D platformer mechanics in useOvoGame.ts including smooth running, jumping, wall-jumping, sliding, coyote time, and gravity-based physics for the player character.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4",
-          "msg-5"
+          "msg-6"
         ],
         "quotes": [
-          "classic mobs",
-          "monsters spawn procedurally around the world (e.g., at a certain distance from the player)"
+          "platformer levels",
+          "running, jumping, and navigating platforms"
         ]
       },
       "acceptanceCriteria": [
-        "At least 3 mob types exist: Zombie (melee), Skeleton (ranged arrow), Spider (fast erratic).",
-        "Mobs spawn procedurally at a distance from the player position, not at the player's feet.",
-        "Each mob chases the player and deals damage on hit.",
-        "Mob state (position, type, HP, alive) is exposed from the hook for rendering.",
-        "Dead mobs are removed or hidden from the world."
+        "Player can run left and right with smooth acceleration and deceleration",
+        "Player can jump with realistic gravity arc",
+        "Wall-jump and slide mechanics are functional",
+        "Coyote time allows brief jump window after walking off a platform edge"
       ]
     },
     {
-      "id": "REQ-51",
-      "text": "Render the three mob types as distinct 3D meshes in `frontend/src/pages/MinecraftClassicGame.tsx` using React Three Fiber. Zombies: green box-figure; Skeletons: white/grey thin box-figure; Spiders: dark grey low-profile wider mesh. Mobs must visually move toward the player each frame driven by the hook's mob state. Skeleton arrows must also be rendered as small elongated meshes travelling toward the player.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "classic mobs",
-          "Zombies (melee, close-range chasing)",
-          "Skeletons (ranged, shoot arrows)",
-          "Spiders (fast, erratic movement)"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Each mob type has a visually distinct 3D mesh rendered in the React Three Fiber scene.",
-        "Mob meshes move in real-time based on hook state.",
-        "Skeleton arrows are rendered as travelling projectile meshes.",
-        "Mobs disappear from the scene when their HP reaches 0."
-      ]
-    },
-    {
-      "id": "REQ-52",
-      "text": "Add player survival stats to `frontend/src/hooks/useMinecraftClassic3DGame.ts`: (1) Health (0–20 HP) — reduced by mob attacks; when it reaches 0, the player respawns at world origin with an empty inventory. (2) Hunger (0–20) — drains at a slow constant rate over time; when empty, health decreases steadily until food is consumed. (3) Stamina (0–100) — depletes while sprinting (holding Shift) or attacking a mob; regenerates automatically when the player is idle or walking at normal speed. Expose all three values from the hook.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "hunger drain over time and reduce health if empty",
-          "stamina deplete when sprinting (or attacking) and regenerate when idle",
-          "losing all health respawn the player without any supplies"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Health bar decreases when mobs attack the player.",
-        "Reaching 0 health respawns the player at world origin with an empty inventory.",
-        "Hunger drains over time at a constant slow rate.",
-        "When hunger is at 0, health decreases over time.",
-        "Stamina depletes when sprinting (Shift held) and when attacking.",
-        "Stamina regenerates when the player is idle or walking.",
-        "All three values are exposed from the hook."
-      ]
-    },
-    {
-      "id": "REQ-53",
-      "text": "Add a HUD overlay to `frontend/src/pages/MinecraftClassicGame.tsx` displaying three survival bars — Health (red), Hunger (orange/yellow), and Stamina (cyan/green) — positioned at the bottom of the screen above the hotbar. Each bar should be labelled with an icon or short text (❤️ HP, 🍖 Hunger, ⚡ Stamina) and a numeric value. Style consistently with the existing retro neon arcade theme (neon glow, dark background pill). The bars update in real time from hook state.",
+      "id": "REQ-2",
+      "text": "Design and implement at least 10 platformer levels in useOvoGame.ts with increasing difficulty, varied platform layouts, hazards, gaps, and moving platforms.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4",
-          "msg-5"
-        ],
-        "quotes": [
-          "hunger drain over time and reduce health if empty",
-          "stamina deplete when sprinting (or attacking) and regenerate when idle"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Three bars (Health, Hunger, Stamina) are visible in the HUD overlay.",
-        "Each bar has a distinct neon color and label.",
-        "Bar widths update in real time to reflect current values.",
-        "Bars are positioned above the hotbar without obscuring gameplay.",
-        "Styling matches the existing retro neon arcade theme."
-      ]
-    },
-    {
-      "id": "REQ-54",
-      "text": "Add a food and crafting system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player starts with an empty inventory (no items, no tools). Food items (e.g., Apple, Bread, Cooked Meat) can be crafted from gathered resources (e.g., Wood + Stone → Wooden Pickaxe; Wheat/crop drops → Bread). Define a basic crafting recipe table with at least: Wooden Pickaxe (2 wood), Apple (drops randomly from leaf/wood blocks), Bread (3 wood or crop items as placeholder). Consuming food restores Hunger. Mining efficiency for stone blocks requires at least a Wooden Pickaxe — bare-hand mining of hard blocks (stone, bedrock) should be very slow or ineffective. Expose inventory contents, crafting recipes, and a `craftItem(recipe)` callback from the hook.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "food items (e.g., apples, bread, cooked meat) must be found in the world or crafted from gathered materials",
-          "No starting inventory — player spawns with nothing and must mine/gather everything",
-          "Basic crafting system",
-          "Mining requires tools (can't mine stone with bare hands effectively)"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Player spawns with zero items in inventory.",
-        "Mining wood blocks drops wood items; mining stone drops stone items.",
-        "At least 3 crafting recipes exist (e.g., Wooden Pickaxe, Bread, Apple).",
-        "Consuming food restores Hunger.",
-        "Stone and harder blocks mine very slowly or not at all without the appropriate tool.",
-        "Inventory, recipes, and craftItem callback are exposed from the hook."
-      ]
-    },
-    {
-      "id": "REQ-55",
-      "text": "Add a basic crafting UI panel to `frontend/src/pages/MinecraftClassicGame.tsx` that opens when the player presses `E`. The panel lists available crafting recipes, shows the required ingredients and whether the player has enough materials, and provides a 'Craft' button for each recipe. Close the panel with `E` or `Escape`. Style consistently with the retro neon arcade theme (dark modal, neon borders, glowing buttons).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "Add food that I have to find and craft",
-          "Basic crafting system"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Pressing E opens a crafting panel overlay.",
-        "All defined recipes are listed with required ingredients.",
-        "Recipes for which the player has sufficient materials show an active 'Craft' button.",
-        "Crafting consumes the required items from inventory and adds the crafted item.",
-        "Panel closes on pressing E or Escape.",
-        "Styling matches the retro neon arcade theme."
-      ]
-    },
-    {
-      "id": "REQ-56",
-      "text": "Add an Experience (XP) system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player's XP increases when: (a) a diamond block is mined (+10 XP per block), or (b) a mob is killed (+5 XP for Zombie, +7 XP for Skeleton, +6 XP for Spider). Each level requires 100 XP. When the bar fills (100 XP), the level increments and the bar resets to 0. Expose `xp`, `xpToNextLevel` (always 100), and `level` from the hook.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
           "msg-6"
         ],
         "quotes": [
-          "Add an experience bar that starts to fill up if you mine diamond or kill a mob"
+          "Multiple levels with increasing difficulty and varied platform layouts"
         ]
       },
       "acceptanceCriteria": [
-        "Mining a diamond block grants XP.",
-        "Killing any mob grants XP.",
-        "XP fills a 0–100 bar; reaching 100 increments the level and resets XP to 0.",
-        "xp, xpToNextLevel, and level are exposed from the hook."
+        "At least 10 distinct levels are defined",
+        "Each level has a unique platform layout",
+        "Difficulty visibly increases across levels (wider gaps, more hazards, more complex paths)",
+        "Levels load correctly in sequence"
       ]
     },
     {
-      "id": "REQ-57",
-      "text": "Add an XP bar to the HUD overlay in `frontend/src/pages/MinecraftClassicGame.tsx`. Display it as a green/yellow neon progress bar labelled with '⭐ XP' and the current level (e.g., 'Level 3'). Position it alongside the Health, Hunger, and Stamina bars in the bottom HUD area. The bar fills based on current XP / xpToNextLevel and resets visually when a new level is reached. Style consistently with the existing retro neon arcade theme.",
+      "id": "REQ-3",
+      "text": "Implement portal objects in useOvoGame.ts that, when the player touches them, teleport the player to a specified target position within the same level or to the start of a specified level.",
       "target": "frontend",
       "source": {
         "messageIds": [
+          "msg-4",
           "msg-6"
         ],
         "quotes": [
-          "filling progressively with each XP-earning action",
-          "potentially showing your current level once the bar fills"
+          "teleport the player to another location/level",
+          "Portals that teleport the player to another location or the next level"
         ]
       },
       "acceptanceCriteria": [
-        "XP bar is visible in the HUD overlay alongside the three survival bars.",
-        "Bar fill percentage accurately reflects current XP progress toward next level.",
-        "Current level number is displayed next to or above the bar.",
-        "Bar visually resets (animates back to 0) when levelling up.",
-        "Styling matches the retro neon arcade theme."
+        "Portal objects are placed in level definitions with a target position or target level",
+        "Player is instantly teleported when touching a portal",
+        "Portals are visually distinct (e.g., glowing ring or swirl animation) on the canvas",
+        "Portals can target a different coordinate in the same level or jump to a new level"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement a level exit/end goal in each level in useOvoGame.ts. When the player reaches the exit, they progress to the next level. After the final level, the game is considered complete and the score (time elapsed) is submitted.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-6"
+        ],
+        "quotes": [
+          "get to the end",
+          "Level goal: reach the end/exit to progress to the next stage"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each level has a clearly marked exit object",
+        "Touching the exit transitions the player to the next level",
+        "Completing the final level triggers the game-complete state",
+        "A timer tracks elapsed time as the score"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Update OvoGame.tsx to render portals on the canvas with a visually distinctive animated appearance (e.g., pulsing glow or swirl), display the current level number, and show a game-complete screen with score submission and leaderboard when all levels are finished.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-6"
+        ],
+        "quotes": [
+          "platformer levels",
+          "reach the end/exit to progress"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Portals are drawn with an animated visual effect on the canvas each frame",
+        "Current level number is displayed in the HUD",
+        "Game-complete overlay appears after the final level with elapsed time score",
+        "Score submission and leaderboard components are shown on completion"
       ]
     }
   ],
   "constraints": [
-    "All changes must be confined to frontend/src/hooks/useMinecraftClassic3DGame.ts and frontend/src/pages/MinecraftClassicGame.tsx — no other game files should be modified.",
-    "Do not modify any files listed in frontend.immutablePaths.",
-    "Maintain the existing pointer-lock first-person camera, WASD movement, block mining/placement, and hotbar functionality already implemented."
+    "All game logic must remain in frontend/src/hooks/useOvoGame.ts and frontend/src/pages/OvoGame.tsx",
+    "Do not modify any files listed in frontend.immutablePaths",
+    "Use HTML5 canvas for rendering, consistent with the existing OvoGame.tsx pattern"
   ],
   "nonGoals": [
-    "Multiplayer or networked mob synchronisation.",
-    "Backend persistence for inventory, XP, or survival stats.",
-    "Day/night cycle lighting changes.",
-    "Advanced mob AI (pathfinding around obstacles, mob spawners).",
-    "Farming or crop-growing mechanics beyond simple recipe placeholders.",
-    "Any changes to other game pages or shared layout/navigation components."
+    "Backend persistence of scores (localStorage only)",
+    "Multiplayer or online features",
+    "3D rendering — this is a 2D canvas game",
+    "New pages or routes beyond the existing OVO route"
   ],
   "imageRequirements": {
     "required": [],

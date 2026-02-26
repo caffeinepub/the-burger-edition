@@ -1,455 +1,48 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 23,
-  "summary": "A multi-game platform website featuring classic browser games (Snake, Tic-Tac-Toe, Memory Match, Stickman Archers, OvO, Super Mario, Pokémon, Slope, 1v1.lol, Minecraft Classic (3D first-person voxel with monsters, survival bars, crafting, and XP), Retro Bowl, Among Us, Five Nights at Freddy's, Rocket Soccer League) with a game lobby, score tracking, and polished UI using React and Tailwind CSS. Football Bros has been removed from the platform entirely.",
-  "architectural_notes": [
-    "Frontend: React with Tailwind CSS",
-    "Multi-game platform with shared lobby and score tracking",
-    "React Three Fiber / Three.js used for 3D games (Slope, Rocket Soccer League)",
-    "Minecraft Classic uses React Three Fiber first-person voxel renderer with pointer lock controls",
-    "Minecraft Classic 3D survival mechanics: health/hunger/stamina/XP bars, mob spawning, crafting system, no starting inventory"
-  ],
+  "projectStateVersion": 3,
+  "summary": "OVO is a 2D platformer game where the player runs, jumps, and navigates platform levels to reach the end/exit. Features include multiple levels with increasing difficulty, portals that teleport the player to another location or level, and a level progression system.",
+  "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-create-a-game-lobby-homepage-that-displays-a-grid-of-available-games-snake-tic-tac-toe-memory-match-each-shown-as-a-card-with-a-game-title-brief-description-and-a-play-button-to-launch-the-game",
-      "title": "Create a game lobby homepage that displays a grid of available games (Snake, Tic-Tac-Toe, Memory Match), each shown as a card with a game title, brief description, and a 'Play' button to launch the game.",
+      "id": "feature-implement-core-2d-platformer-mechanics-in-useovogame-ts-including-smooth-running-jumping-wall-jumping-sliding-coyote-time-and-gravity-based-physics-for-the-player-character",
+      "title": "Implement core 2D platformer mechanics in useOvoGame.ts including smooth running, jumping, wall-jumping, sliding, coyote time, and gravity-based physics for the player character.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-a-fully-playable-snake-game-where-the-player-controls-a-snake-using-arrow-keys-or-wasd-eats-food-to-grow-and-score-points-and-the-game-ends-on-wall-or-self-collision-display-the-current-score-and-a-restart-button",
-      "title": "Implement a fully playable Snake game where the player controls a snake using arrow keys or WASD, eats food to grow and score points, and the game ends on wall or self-collision. Display the current score and a restart button.",
+      "id": "feature-design-and-implement-at-least-10-platformer-levels-in-useovogame-ts-with-increasing-difficulty-varied-platform-layouts-hazards-gaps-and-moving-platforms",
+      "title": "Design and implement at least 10 platformer levels in useOvoGame.ts with increasing difficulty, varied platform layouts, hazards, gaps, and moving platforms.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-a-fully-playable-tic-tac-toe-game-for-two-players-on-the-same-device-display-the-current-player-s-turn-detect-wins-and-draws-highlight-the-winning-line-and-provide-a-restart-button",
-      "title": "Implement a fully playable Tic-Tac-Toe game for two players on the same device. Display the current player's turn, detect wins and draws, highlight the winning line, and provide a restart button.",
+      "id": "feature-implement-portal-objects-in-useovogame-ts-that-when-the-player-touches-them-teleport-the-player-to-a-specified-target-position-within-the-same-level-or-to-the-start-of-a-specified-level",
+      "title": "Implement portal objects in useOvoGame.ts that, when the player touches them, teleport the player to a specified target position within the same level or to the start of a specified level.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-a-fully-playable-memory-match-card-flip-game-with-a-grid-of-face-down-cards-the-player-flips-two-cards-at-a-time-matched-pairs-stay-face-up-track-the-number-of-moves-taken-and-show-a-congratulations-screen-when-all-pairs-are-matched",
-      "title": "Implement a fully playable Memory Match (card-flip) game with a grid of face-down cards. The player flips two cards at a time; matched pairs stay face-up. Track the number of moves taken and show a congratulations screen when all pairs are matched.",
+      "id": "feature-implement-a-level-exit-end-goal-in-each-level-in-useovogame-ts-when-the-player-reaches-the-exit-they-progress-to-the-next-level-after-the-final-level-the-game-is-considered-complete-and-the-score-time-elapsed-is-submitted",
+      "title": "Implement a level exit/end goal in each level in useOvoGame.ts. When the player reaches the exit, they progress to the next level. After the final level, the game is considered complete and the score (time elapsed) is submitted.",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-persistent-high-score-tracking-in-the-backend-for-snake-and-memory-match-store-the-top-scores-per-game-player-nickname-score-moves-and-display-a-leaderboard-on-the-lobby-and-each-game-s-page",
-      "title": "Implement persistent high-score tracking in the backend for Snake and Memory Match. Store the top scores per game (player nickname + score/moves) and display a leaderboard on the lobby and each game's page.",
+      "id": "feature-update-ovogame-tsx-to-render-portals-on-the-canvas-with-a-visually-distinctive-animated-appearance-e-g-pulsing-glow-or-swirl-display-the-current-level-number-and-show-a-game-complete-screen-with-score-submission-and-leaderboard-when-all-levels-are-finished",
+      "title": "Update OvoGame.tsx to render portals on the canvas with a visually distinctive animated appearance (e.g., pulsing glow or swirl), display the current level number, and show a game-complete screen with score submission and leaderboard when all levels are finished.",
       "reqIds": [
         "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-cohesive-retro-arcade-visual-theme-across-the-entire-site-dark-background-with-neon-accent-colors-pixel-style-or-chunky-typography-glowing-ui-elements-and-consistent-card-button-styling-enforce-the-theme-uniformly-across-the-lobby-and-all-game-pages",
-      "title": "Apply a cohesive retro-arcade visual theme across the entire site: dark background with neon accent colors, pixel-style or chunky typography, glowing UI elements, and consistent card/button styling. Enforce the theme uniformly across the lobby and all game pages.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-stickman-archers-game-where-two-stickman-archers-face-each-other-on-a-2d-canvas-player-1-uses-keyboard-controls-to-aim-and-shoot-arrows-the-game-supports-single-player-vs-basic-ai-or-two-player-same-device-modes-each-archer-has-a-health-bar-the-game-ends-when-one-archer-is-hit-enough-times-display-a-winner-announcement-and-a-restart-button",
-      "title": "Implement a fully playable Stickman Archers game where two stickman archers face each other on a 2D canvas. Player 1 uses keyboard controls to aim and shoot arrows; the game supports single-player (vs basic AI) or two-player (same device) modes. Each archer has a health bar; the game ends when one archer is hit enough times. Display a winner announcement and a restart button.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-stickman-archers-card-to-the-game-lobby-grid-alongside-the-existing-snake-tic-tac-toe-and-memory-match-cards-the-card-must-include-the-game-title-a-brief-description-and-a-play-button-linking-to-the-stickman-archers-route",
-      "title": "Add a Stickman Archers card to the game lobby grid alongside the existing Snake, Tic-Tac-Toe, and Memory Match cards. The card must include the game title, a brief description, and a 'Play' button linking to the Stickman Archers route.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-register-a-new-route-for-the-stickman-archers-game-page-e-g-stickman-archers-in-the-tanstack-router-configuration-in-app-tsx-nested-under-the-shared-layout-wrapper",
-      "title": "Register a new route for the Stickman Archers game page (e.g., /stickman-archers) in the TanStack Router configuration in App.tsx, nested under the shared Layout wrapper.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-ovo-style-timed-platformer-game-page-at-ovo-the-player-controls-a-stickman-character-using-arrow-keys-or-wasd-run-left-right-jump-slide-crouch-the-game-features-multiple-hand-crafted-obstacle-course-levels-with-platforms-gaps-and-hazards-the-player-s-goal-is-to-reach-the-end-of-each-level-as-fast-as-possible-track-elapsed-time-per-level-and-total-run-time-support-wall-jumps-and-a-slide-mechanic-duck-under-low-obstacles-slide-off-ledges-the-game-ends-when-the-player-completes-all-levels-display-a-final-time-and-prompt-for-score-submission-if-the-player-falls-or-hits-a-hazard-restart-the-current-level-s-timer-render-everything-on-an-html-canvas-styled-with-the-existing-retro-arcade-neon-theme",
-      "title": "Implement a fully playable OvO-style timed platformer game page at /ovo. The player controls a stickman character using arrow keys or WASD (run left/right, jump, slide/crouch). The game features multiple hand-crafted obstacle-course levels with platforms, gaps, and hazards. The player's goal is to reach the end of each level as fast as possible. Track elapsed time per level and total run time. Support wall jumps and a slide mechanic (duck under low obstacles, slide off ledges). The game ends when the player completes all levels; display a final time and prompt for score submission. If the player falls or hits a hazard, restart the current level's timer. Render everything on an HTML canvas styled with the existing retro-arcade neon theme.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-integrate-ovo-fastest-completion-time-scores-into-the-existing-localstorage-leaderboard-system-using-the-uselocalleaderboard-hook-with-ascending-order-lower-time-better-display-the-ovo-leaderboard-on-the-ovo-game-page-using-the-existing-leaderboard-component-with-lower-is-better-mode",
-      "title": "Integrate OvO fastest-completion-time scores into the existing localStorage leaderboard system using the useLocalLeaderboard hook with ascending order (lower time = better). Display the OvO leaderboard on the OvO game page using the existing Leaderboard component with lower-is-better mode.",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-register-a-new-ovo-route-in-app-tsx-tanstack-router-nested-under-the-shared-layout-wrapper-pointing-to-the-new-ovo-game-page-component",
-      "title": "Register a new /ovo route in App.tsx (TanStack Router), nested under the shared Layout wrapper, pointing to the new OvO game page component.",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-an-ovo-game-card-to-the-game-lobby-grid-in-gamelobby-tsx-alongside-the-existing-snake-tic-tac-toe-memory-match-and-stickman-archers-cards-the-card-must-include-the-game-title-ovo-a-brief-description-timed-platformer-run-slide-jump-through-obstacle-courses-and-a-play-button-linking-to-ovo-style-the-card-consistently-with-the-existing-neon-arcade-card-theme",
-      "title": "Add an OvO game card to the game lobby grid in GameLobby.tsx alongside the existing Snake, Tic-Tac-Toe, Memory Match, and Stickman Archers cards. The card must include the game title 'OvO', a brief description (timed platformer, run/slide/jump through obstacle courses), and a 'Play' button linking to /ovo. Style the card consistently with the existing neon arcade card theme.",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-super-mario-inspired-side-scrolling-platformer-game-page-at-super-mario-the-player-controls-a-character-using-arrow-keys-or-wasd-run-left-right-jump-the-game-features-platforms-gaps-enemies-goomba-style-and-collectible-coins-collision-with-enemies-ends-the-game-falling-off-the-screen-ends-the-game-track-and-display-score-coins-collected-show-a-game-over-screen-with-final-score-and-a-restart-button-render-on-an-html-canvas-styled-with-the-existing-retro-arcade-neon-theme-integrate-score-into-the-localstorage-leaderboard-using-uselocalleaderboard",
-      "title": "Implement a fully playable Super Mario-inspired side-scrolling platformer game page at /super-mario. The player controls a character using arrow keys or WASD (run left/right, jump). The game features platforms, gaps, enemies (Goomba-style), and collectible coins. Collision with enemies ends the game; falling off the screen ends the game. Track and display score (coins collected). Show a game-over screen with final score and a restart button. Render on an HTML canvas styled with the existing retro-arcade neon theme. Integrate score into the localStorage leaderboard using useLocalLeaderboard.",
-      "reqIds": [
-        "REQ-14"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-pok-mon-inspired-turn-based-battle-game-page-at-pokemon-the-player-chooses-from-a-small-roster-of-pok-mon-at-least-4-each-with-unique-moves-hp-and-type-battles-are-fought-against-ai-opponents-in-turn-based-fashion-the-player-selects-a-move-then-the-ai-selects-a-move-display-hp-bars-for-both-pok-mon-the-game-ends-when-the-player-s-or-opponent-s-pok-mon-faints-hp-reaches-0-show-a-win-loss-screen-with-a-restart-play-again-button-style-with-the-existing-retro-arcade-neon-theme-integrate-win-streak-or-battle-count-into-the-localstorage-leaderboard",
-      "title": "Implement a fully playable Pokémon-inspired turn-based battle game page at /pokemon. The player chooses from a small roster of Pokémon (at least 4), each with unique moves, HP, and type. Battles are fought against AI opponents in turn-based fashion: the player selects a move, then the AI selects a move. Display HP bars for both Pokémon. The game ends when the player's or opponent's Pokémon faints (HP reaches 0). Show a win/loss screen with a restart/play-again button. Style with the existing retro-arcade neon theme. Integrate win streak or battle count into the localStorage leaderboard.",
-      "reqIds": [
-        "REQ-15"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-slope-inspired-endless-3d-ball-rolling-game-page-at-slope-render-the-game-using-react-three-fiber-three-js-the-player-controls-a-rolling-ball-on-a-procedurally-generated-downward-slope-using-left-right-arrow-keys-or-a-d-the-slope-features-randomly-placed-obstacles-and-gaps-that-the-player-must-dodge-the-ball-accelerates-over-time-the-game-ends-when-the-ball-falls-off-the-slope-or-hits-an-obstacle-track-distance-score-time-survived-or-distance-traveled-show-a-game-over-screen-with-score-and-restart-button-integrate-score-into-the-localstorage-leaderboard",
-      "title": "Implement a fully playable Slope-inspired endless 3D ball-rolling game page at /slope. Render the game using React Three Fiber / Three.js. The player controls a rolling ball on a procedurally generated downward slope using left/right arrow keys or A/D. The slope features randomly placed obstacles and gaps that the player must dodge. The ball accelerates over time. The game ends when the ball falls off the slope or hits an obstacle. Track distance/score (time survived or distance traveled). Show a game-over screen with score and restart button. Integrate score into the localStorage leaderboard.",
-      "reqIds": [
-        "REQ-16"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-1v1-lol-inspired-build-and-shoot-arena-game-page-at-1v1-lol-render-on-an-html-canvas-the-player-controls-a-character-arrow-keys-wasd-to-move-aim-with-mouse-or-keyboard-shoot-and-place-simple-platform-wall-structures-the-player-battles-against-a-basic-ai-opponent-each-player-has-hp-the-game-ends-when-one-player-s-hp-reaches-0-support-placing-at-least-one-type-of-structure-wall-platform-to-use-as-cover-display-hp-bars-for-both-players-show-a-winner-screen-with-restart-button-style-with-the-retro-arcade-neon-theme-integrate-score-wins-into-localstorage-leaderboard",
-      "title": "Implement a fully playable 1v1.lol-inspired build-and-shoot arena game page at /1v1-lol. Render on an HTML canvas. The player controls a character (arrow keys/WASD to move, aim with mouse or keyboard, shoot, and place simple platform/wall structures). The player battles against a basic AI opponent. Each player has HP; the game ends when one player's HP reaches 0. Support placing at least one type of structure (wall/platform) to use as cover. Display HP bars for both players. Show a winner screen with restart button. Style with the retro-arcade neon theme. Integrate score (wins) into localStorage leaderboard.",
-      "reqIds": [
-        "REQ-17"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-minecraft-classic-inspired-2d-block-placing-and-mining-game-page-at-minecraft-classic-render-on-an-html-canvas-the-player-character-moves-through-a-tile-based-2d-world-left-right-jump-the-world-contains-different-block-types-dirt-stone-wood-etc-the-player-can-mine-blocks-by-clicking-on-adjacent-blocks-and-place-blocks-from-an-inventory-display-a-small-hotbar-inventory-ui-the-player-can-build-simple-structures-style-with-the-retro-arcade-neon-theme-no-leaderboard-integration-required-sandbox-mode-include-a-lobby-card-and-registered-route",
-      "title": "Implement a fully playable Minecraft Classic-inspired 2D block-placing and mining game page at /minecraft-classic. Render on an HTML canvas. The player character moves through a tile-based 2D world (left/right/jump). The world contains different block types (dirt, stone, wood, etc.). The player can mine blocks by clicking on adjacent blocks and place blocks from an inventory. Display a small hotbar/inventory UI. The player can build simple structures. Style with the retro-arcade neon theme. No leaderboard integration required (sandbox mode). Include a lobby card and registered route.",
-      "reqIds": [
-        "REQ-18"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-retro-bowl-inspired-simplified-american-football-game-page-at-retro-bowl-render-on-an-html-canvas-the-player-calls-offensive-plays-run-short-pass-long-pass-and-controls-throwing-running-to-advance-down-the-field-and-score-touchdowns-the-defense-is-handled-by-ai-track-the-score-touchdowns-the-game-consists-of-a-set-number-of-drives-or-a-time-limit-show-a-final-score-screen-and-restart-button-style-with-the-retro-arcade-neon-theme-integrate-score-touchdowns-or-total-points-into-the-localstorage-leaderboard",
-      "title": "Implement a fully playable Retro Bowl-inspired simplified American football game page at /retro-bowl. Render on an HTML canvas. The player calls offensive plays (run, short pass, long pass) and controls throwing/running to advance down the field and score touchdowns. The defense is handled by AI. Track the score (touchdowns). The game consists of a set number of drives or a time limit. Show a final score screen and restart button. Style with the retro-arcade neon theme. Integrate score (touchdowns or total points) into the localStorage leaderboard.",
-      "reqIds": [
-        "REQ-19"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-among-us-inspired-simplified-mini-game-page-at-among-us-render-on-an-html-canvas-one-player-is-secretly-assigned-as-the-impostor-the-rest-are-crewmates-completing-tasks-implement-a-single-player-mode-where-the-player-is-a-crewmate-completing-mini-tasks-simple-click-key-press-interactions-while-an-ai-impostor-roams-the-map-and-tries-to-eliminate-them-track-tasks-completed-vs-total-tasks-the-game-ends-when-all-tasks-are-completed-crewmates-win-or-the-impostor-eliminates-enough-crewmates-show-a-result-screen-with-restart-button-style-with-the-retro-arcade-neon-theme-integrate-score-tasks-completed-into-the-localstorage-leaderboard",
-      "title": "Implement a fully playable Among Us-inspired simplified mini-game page at /among-us. Render on an HTML canvas. One player is secretly assigned as the Impostor; the rest are Crewmates completing tasks. Implement a single-player mode where the player is a Crewmate completing mini-tasks (simple click/key-press interactions) while an AI Impostor roams the map and tries to 'eliminate' them. Track tasks completed vs total tasks. The game ends when all tasks are completed (Crewmates win) or the Impostor eliminates enough Crewmates. Show a result screen with restart button. Style with the retro-arcade neon theme. Integrate score (tasks completed) into the localStorage leaderboard.",
-      "reqIds": [
-        "REQ-20"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-fully-playable-five-nights-at-freddy-s-inspired-survival-horror-game-page-at-fnaf-the-player-monitors-a-set-of-security-cameras-at-least-4-camera-views-and-manages-a-limited-power-supply-animatronic-characters-at-least-2-move-between-rooms-over-time-and-attempt-to-reach-the-player-s-office-the-player-can-close-left-right-doors-using-keyboard-shortcuts-to-block-animatronics-but-each-action-drains-power-the-night-lasts-a-fixed-duration-e-g-90-seconds-6-am-if-an-animatronic-reaches-the-office-while-the-door-is-open-the-game-ends-jumpscare-screen-if-the-player-survives-until-6-am-they-win-track-nights-survived-for-the-leaderboard-style-with-the-retro-arcade-neon-theme",
-      "title": "Implement a fully playable Five Nights at Freddy's-inspired survival horror game page at /fnaf. The player monitors a set of security cameras (at least 4 camera views) and manages a limited power supply. Animatronic characters (at least 2) move between rooms over time and attempt to reach the player's office. The player can close left/right doors (using keyboard shortcuts) to block animatronics but each action drains power. The night lasts a fixed duration (e.g., 90 seconds = 6 AM). If an animatronic reaches the office while the door is open, the game ends (jumpscare screen). If the player survives until 6 AM, they win. Track nights survived for the leaderboard. Style with the retro-arcade neon theme.",
-      "reqIds": [
-        "REQ-21"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-navigation-links-in-layout-tsx-to-include-all-8-new-game-routes-super-mario-pokemon-slope-1v1-lol-minecraft-classic-retro-bowl-among-us-fnaf-alongside-the-existing-routes-maintaining-the-sticky-retro-arcade-header-style",
-      "title": "Update the navigation links in Layout.tsx to include all 8 new game routes (/super-mario, /pokemon, /slope, /1v1-lol, /minecraft-classic, /retro-bowl, /among-us, /fnaf) alongside the existing routes, maintaining the sticky retro arcade header style.",
-      "reqIds": [
-        "REQ-22"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-replace-the-existing-rocket-soccer-league-game-page-at-its-current-route-with-a-fully-3d-implementation-using-react-three-fiber-three-js-render-a-3d-stadium-arena-with-a-flat-playing-field-two-goals-one-on-each-end-and-boundary-walls-on-all-sides-the-ball-must-be-a-3d-sphere-with-rolling-physics-including-momentum-bouncing-off-walls-and-goals-and-realistic-velocity-transfer-when-hit-by-a-car",
-      "title": "Replace the existing Rocket Soccer League game page at its current route with a fully 3D implementation using React Three Fiber / Three.js. Render a 3D stadium arena with a flat playing field, two goals (one on each end), and boundary walls on all sides. The ball must be a 3D sphere with rolling physics including momentum, bouncing off walls and goals, and realistic velocity transfer when hit by a car.",
-      "reqIds": [
-        "REQ-23"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-player-controlled-rocket-powered-car-in-the-3d-rocket-soccer-league-game-the-car-must-be-controllable-using-wasd-or-arrow-keys-for-forward-backward-turn-movement-with-a-boost-mechanic-e-g-shift-or-space-that-temporarily-increases-speed-the-car-collides-with-the-ball-and-deflects-it-based-on-velocity-and-direction-at-impact",
-      "title": "Implement a player-controlled rocket-powered car in the 3D Rocket Soccer League game. The car must be controllable using WASD or arrow keys for forward/backward/turn movement, with a boost mechanic (e.g., Shift or Space) that temporarily increases speed. The car collides with the ball and deflects it based on velocity and direction at impact.",
-      "reqIds": [
-        "REQ-24"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-basic-ai-opponent-car-in-the-3d-rocket-soccer-league-game-the-ai-car-should-chase-the-ball-and-attempt-to-hit-it-toward-the-player-s-goal-the-ai-car-must-have-the-same-physical-constraints-as-the-player-car-speed-collision-bounce",
-      "title": "Implement a basic AI opponent car in the 3D Rocket Soccer League game. The AI car should chase the ball and attempt to hit it toward the player's goal. The AI car must have the same physical constraints as the player car (speed, collision, bounce).",
-      "reqIds": [
-        "REQ-25"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-scoreboard-and-3-minute-match-timer-for-the-3d-rocket-soccer-league-game-track-goals-scored-by-each-team-player-and-ai-when-the-ball-fully-crosses-into-a-goal-increment-the-corresponding-team-s-score-and-reset-the-ball-to-center-field-display-the-score-and-countdown-timer-as-a-retro-neon-hud-overlay-on-top-of-the-3d-canvas-when-the-timer-reaches-zero-display-a-final-result-screen-showing-the-winner-or-draw-with-a-play-again-restart-button",
-      "title": "Implement a scoreboard and 3-minute match timer for the 3D Rocket Soccer League game. Track goals scored by each team (player and AI). When the ball fully crosses into a goal, increment the corresponding team's score and reset the ball to center field. Display the score and countdown timer as a retro neon HUD overlay on top of the 3D canvas. When the timer reaches zero, display a final result screen showing the winner (or draw) with a 'Play Again' restart button.",
-      "reqIds": [
-        "REQ-26"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-integrate-the-3d-rocket-soccer-league-game-s-win-results-into-the-existing-localstorage-leaderboard-using-the-uselocalleaderboard-hook-on-match-end-when-the-player-wins-prompt-the-player-to-submit-their-nickname-and-save-the-win-to-the-leaderboard-display-the-leaderboard-on-the-game-page-using-the-existing-leaderboard-component-consistent-with-other-game-pages",
-      "title": "Integrate the 3D Rocket Soccer League game's win results into the existing localStorage leaderboard using the useLocalLeaderboard hook. On match end (when the player wins), prompt the player to submit their nickname and save the win to the leaderboard. Display the leaderboard on the game page using the existing Leaderboard component, consistent with other game pages.",
-      "reqIds": [
-        "REQ-27"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-style-the-3d-rocket-soccer-league-game-s-hud-result-screen-and-surrounding-page-elements-with-the-existing-retro-neon-arcade-theme-use-neon-accent-colors-glowing-text-and-consistent-button-styling-matching-the-rest-of-the-platform-the-3d-scene-itself-should-use-neon-colored-materials-for-the-field-lines-ball-cars-and-goal-frames",
-      "title": "Style the 3D Rocket Soccer League game's HUD, result screen, and surrounding page elements with the existing retro neon arcade theme. Use neon accent colors, glowing text, and consistent button styling matching the rest of the platform. The 3D scene itself should use neon-colored materials for the field lines, ball, cars, and goal frames.",
-      "reqIds": [
-        "REQ-28"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-a-new-react-three-fiber-game-hook-usefootballbrosgame-ts-in-frontend-src-hooks-that-implements-the-core-football-bros-game-logic-a-top-down-3d-arena-with-end-zones-and-yard-lines-a-player-controlled-character-wasd-arrow-keys-to-move-sprint-with-shift-a-ball-that-can-be-picked-up-and-carried-tackle-mechanics-collision-with-ball-carrier-causes-a-fumble-tackle-a-basic-ai-opponent-that-chases-the-ball-carrier-and-attempts-to-score-touchdown-detection-when-a-player-carrying-the-ball-crosses-the-opposing-end-zone-score-tracking-touchdowns-per-side-and-a-match-timer-e-g-3-minutes-the-hook-must-expose-game-state-including-player-ai-positions-ball-state-scores-and-match-phase-playing-game-over",
-      "title": "Create a new React Three Fiber game hook `useFootballBrosGame.ts` in `frontend/src/hooks/` that implements the core Football Bros game logic: a top-down 3D arena with end zones and yard lines, a player-controlled character (WASD/arrow keys to move, sprint with Shift), a ball that can be picked up and carried, tackle mechanics (collision with ball carrier causes a fumble/tackle), a basic AI opponent that chases the ball carrier and attempts to score, touchdown detection when a player carrying the ball crosses the opposing end zone, score tracking (touchdowns per side), and a match timer (e.g., 3 minutes). The hook must expose game state including player/AI positions, ball state, scores, and match phase (playing/game-over).",
-      "reqIds": [
-        "REQ-29"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-a-new-football-bros-game-page-frontend-src-pages-footballbrosgame-tsx-that-renders-the-game-using-react-three-fiber-the-3d-scene-must-include-a-flat-top-down-playing-field-with-neon-yard-lines-and-two-end-zones-in-contrasting-neon-colors-boundary-walls-on-all-sides-a-3d-ball-sphere-a-player-character-mesh-and-an-ai-opponent-mesh-in-distinct-neon-colors-and-appropriate-lighting-drive-game-state-from-the-usefootballbrosgame-hook-display-a-retro-neon-hud-overlay-react-dom-overlay-on-top-of-the-canvas-showing-current-score-player-vs-ai-and-the-remaining-match-timer-on-game-end-display-a-winner-result-screen-with-a-play-again-restart-button-style-all-hud-and-ui-elements-consistently-with-the-existing-retro-neon-arcade-theme",
-      "title": "Create a new Football Bros game page `frontend/src/pages/FootballBrosGame.tsx` that renders the game using React Three Fiber. The 3D scene must include: a flat top-down playing field with neon yard lines and two end zones in contrasting neon colors, boundary walls on all sides, a 3D ball (sphere), a player character mesh and an AI opponent mesh in distinct neon colors, and appropriate lighting. Drive game state from the `useFootballBrosGame` hook. Display a retro neon HUD overlay (React DOM overlay on top of the canvas) showing current score (Player vs AI) and the remaining match timer. On game end, display a winner/result screen with a 'Play Again' restart button. Style all HUD and UI elements consistently with the existing retro neon arcade theme.",
-      "reqIds": [
-        "REQ-30"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-integrate-football-bros-win-results-into-the-existing-localstorage-leaderboard-using-the-uselocalleaderboard-hook-from-frontend-src-hooks-useleaderboard-ts-on-match-end-if-the-player-wins-display-the-scoresubmission-component-to-prompt-the-player-for-a-nickname-and-save-the-win-count-to-the-leaderboard-under-the-key-football-bros-display-the-leaderboard-component-on-the-football-bros-game-page-below-the-game-canvas-consistent-with-how-other-game-pages-e-g-rocketsoccerleaguegame-tsx-handle-it",
-      "title": "Integrate Football Bros win results into the existing localStorage leaderboard using the `useLocalLeaderboard` hook (from `frontend/src/hooks/useLeaderboard.ts`). On match end, if the player wins, display the `ScoreSubmission` component to prompt the player for a nickname and save the win count to the leaderboard under the key `football-bros`. Display the `Leaderboard` component on the Football Bros game page below the game canvas, consistent with how other game pages (e.g., `RocketSoccerLeagueGame.tsx`) handle it.",
-      "reqIds": [
-        "REQ-31"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-register-a-new-football-bros-route-in-frontend-src-app-tsx-using-the-tanstack-router-configuration-nested-under-the-shared-layout-wrapper-pointing-to-the-new-footballbrosgame-page-component-follow-the-same-pattern-used-for-other-game-routes-in-the-file-e-g-the-rocket-soccer-league-route",
-      "title": "Register a new `/football-bros` route in `frontend/src/App.tsx` using the TanStack Router configuration, nested under the shared Layout wrapper, pointing to the new `FootballBrosGame` page component. Follow the same pattern used for other game routes in the file (e.g., the `/rocket-soccer-league` route).",
-      "reqIds": [
-        "REQ-32"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-football-bros-game-card-to-the-game-lobby-grid-in-frontend-src-pages-gamelobby-tsx-the-card-must-include-the-game-title-football-bros-a-brief-description-e-g-3d-arcade-football-carry-the-ball-dodge-tackles-and-score-touchdowns-against-the-ai-and-a-play-button-linking-to-football-bros-style-the-card-consistently-with-the-existing-neon-arcade-card-theme-used-by-other-game-cards-on-the-page",
-      "title": "Add a Football Bros game card to the game lobby grid in `frontend/src/pages/GameLobby.tsx`. The card must include the game title 'Football Bros', a brief description (e.g., '3D arcade football — carry the ball, dodge tackles, and score touchdowns against the AI'), and a 'Play' button linking to `/football-bros`. Style the card consistently with the existing neon arcade card theme used by other game cards on the page.",
-      "reqIds": [
-        "REQ-33"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-navigation-link-for-football-bros-football-bros-to-the-sticky-retro-arcade-header-in-frontend-src-components-layout-tsx-alongside-the-existing-game-navigation-links-ensure-the-link-appears-in-both-the-desktop-nav-and-the-mobile-hamburger-menu-maintaining-the-existing-header-style",
-      "title": "Add a navigation link for Football Bros (`/football-bros`) to the sticky retro arcade header in `frontend/src/components/Layout.tsx`, alongside the existing game navigation links. Ensure the link appears in both the desktop nav and the mobile hamburger menu, maintaining the existing header style.",
-      "reqIds": [
-        "REQ-34",
-        "REQ-40"
-      ],
-      "version": 2
-    },
-    {
-      "id": "feature-create-a-new-react-three-fiber-game-hook-usefootballbrosgame-ts-in-frontend-src-hooks-that-implements-the-core-football-bros-game-logic-a-top-down-3d-arena-with-end-zones-and-yard-lines-a-player-controlled-character-wasd-arrow-keys-to-move-sprint-with-shift-a-ball-that-can-be-picked-up-and-carried-tackle-mechanics-collision-with-ball-carrier-causes-a-fumble-tackle-a-basic-ai-opponent-that-chases-the-ball-carrier-and-attempts-to-score-touchdown-detection-when-a-player-carrying-the-ball-crosses-the-opposing-end-zone-score-tracking-touchdowns-per-side-and-a-3-minute-match-timer-the-hook-must-expose-game-state-including-player-ai-positions-ball-state-scores-and-match-phase-playing-game-over",
-      "title": "Create a new React Three Fiber game hook `useFootballBrosGame.ts` in `frontend/src/hooks/` that implements the core Football Bros game logic: a top-down 3D arena with end zones and yard lines, a player-controlled character (WASD/arrow keys to move, sprint with Shift), a ball that can be picked up and carried, tackle mechanics (collision with ball carrier causes a fumble/tackle), a basic AI opponent that chases the ball carrier and attempts to score, touchdown detection when a player carrying the ball crosses the opposing end zone, score tracking (touchdowns per side), and a 3-minute match timer. The hook must expose game state including player/AI positions, ball state, scores, and match phase (playing/game-over).",
-      "reqIds": [
-        "REQ-35"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-a-new-football-bros-game-page-frontend-src-pages-footballbrosgame-tsx-that-renders-the-game-using-react-three-fiber-the-3d-scene-must-include-a-flat-top-down-playing-field-with-neon-yard-lines-and-two-end-zones-in-contrasting-neon-colors-boundary-walls-on-all-sides-a-3d-ball-sphere-a-player-character-mesh-and-an-ai-opponent-mesh-in-distinct-neon-colors-and-appropriate-lighting-drive-all-game-state-from-the-usefootballbrosgame-hook-display-a-retro-neon-hud-overlay-react-dom-overlay-on-top-of-the-canvas-showing-current-score-player-vs-ai-and-the-remaining-match-timer-on-game-end-display-a-winner-result-screen-with-a-play-again-restart-button-style-all-hud-and-ui-elements-consistently-with-the-existing-retro-neon-arcade-theme",
-      "title": "Create a new Football Bros game page `frontend/src/pages/FootballBrosGame.tsx` that renders the game using React Three Fiber. The 3D scene must include: a flat top-down playing field with neon yard lines and two end zones in contrasting neon colors, boundary walls on all sides, a 3D ball (sphere), a player character mesh and an AI opponent mesh in distinct neon colors, and appropriate lighting. Drive all game state from the `useFootballBrosGame` hook. Display a retro neon HUD overlay (React DOM overlay on top of the canvas) showing current score (Player vs AI) and the remaining match timer. On game end, display a winner/result screen with a 'Play Again' restart button. Style all HUD and UI elements consistently with the existing retro neon arcade theme.",
-      "reqIds": [
-        "REQ-36"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-integrate-football-bros-win-results-into-the-existing-localstorage-leaderboard-using-the-uselocalleaderboard-hook-from-frontend-src-hooks-useleaderboard-ts-on-match-end-if-the-player-wins-display-the-scoresubmission-component-to-prompt-for-a-nickname-and-save-the-win-count-to-the-leaderboard-under-the-key-football-bros-display-the-leaderboard-component-on-the-football-bros-game-page-below-the-game-canvas-following-the-same-pattern-as-rocketsoccerleaguegame-tsx",
-      "title": "Integrate Football Bros win results into the existing localStorage leaderboard using the `useLocalLeaderboard` hook from `frontend/src/hooks/useLeaderboard.ts`. On match end, if the player wins, display the `ScoreSubmission` component to prompt for a nickname and save the win count to the leaderboard under the key `football-bros`. Display the `Leaderboard` component on the Football Bros game page below the game canvas, following the same pattern as `RocketSoccerLeagueGame.tsx`.",
-      "reqIds": [
-        "REQ-37"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-register-a-new-football-bros-route-in-frontend-src-app-tsx-using-the-tanstack-router-configuration-nested-under-the-shared-layout-wrapper-pointing-to-the-footballbrosgame-page-component-follow-the-same-pattern-used-for-other-game-routes-such-as-the-rocket-soccer-league-route",
-      "title": "Register a new `/football-bros` route in `frontend/src/App.tsx` using the TanStack Router configuration, nested under the shared Layout wrapper, pointing to the `FootballBrosGame` page component. Follow the same pattern used for other game routes such as the `/rocket-soccer-league` route.",
-      "reqIds": [
-        "REQ-38"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-football-bros-game-card-to-the-game-lobby-grid-in-frontend-src-pages-gamelobby-tsx-the-card-must-include-the-game-title-football-bros-a-brief-description-e-g-3d-arcade-football-carry-the-ball-dodge-tackles-and-score-touchdowns-against-the-ai-and-a-play-button-linking-to-football-bros-style-the-card-consistently-with-the-existing-neon-arcade-card-theme",
-      "title": "Add a Football Bros game card to the game lobby grid in `frontend/src/pages/GameLobby.tsx`. The card must include the game title 'Football Bros', a brief description (e.g., '3D arcade football — carry the ball, dodge tackles, and score touchdowns against the AI'), and a 'Play' button linking to `/football-bros`. Style the card consistently with the existing neon arcade card theme.",
-      "reqIds": [
-        "REQ-39"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-replace-the-content-of-frontend-src-pages-footballbrosgame-tsx-so-that-instead-of-rendering-a-custom-react-three-fiber-3d-game-it-embeds-the-actual-game-from-https-footballbros-io-inside-a-full-screen-iframe-the-iframe-must-fill-the-available-viewport-height-at-minimum-600px-ideally-100vh-minus-the-header-have-no-border-and-be-styled-consistently-with-the-retro-arcade-neon-theme-surrounding-it-remove-all-references-to-the-usefootballbrosgame-hook-and-three-js-scene-from-the-page-component-keep-the-page-title-leaderboard-section-and-score-submission-section-intact-below-the-iframe",
-      "title": "Replace the content of `frontend/src/pages/FootballBrosGame.tsx` so that instead of rendering a custom React Three Fiber 3D game, it embeds the actual game from https://footballbros.io inside a full-screen `<iframe>`. The iframe must fill the available viewport height (at minimum 600px, ideally 100vh minus the header), have no border, and be styled consistently with the retro arcade neon theme surrounding it. Remove all references to the `useFootballBrosGame` hook and Three.js scene from the page component. Keep the page title, leaderboard section, and score submission section intact below the iframe.",
-      "reqIds": [
-        "REQ-41"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-usefootballbrosgame-hook-file-at-frontend-src-hooks-usefootballbrosgame-ts-since-it-is-no-longer-used-by-the-iframe-based-football-bros-page",
-      "title": "Remove the `useFootballBrosGame` hook file at `frontend/src/hooks/useFootballBrosGame.ts` since it is no longer used by the iframe-based Football Bros page.",
-      "reqIds": [
-        "REQ-42"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-delete-the-file-frontend-src-pages-footballbrosgame-tsx-entirely-removing-the-football-bros-game-page-from-the-project",
-      "title": "Delete the file `frontend/src/pages/FootballBrosGame.tsx` entirely, removing the Football Bros game page from the project.",
-      "reqIds": [
-        "REQ-43"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-football-bros-route-from-frontend-src-app-tsx-delete-the-route-definition-and-any-import-of-footballbrosgame-from-the-tanstack-router-configuration",
-      "title": "Remove the `/football-bros` route from `frontend/src/App.tsx`. Delete the route definition and any import of `FootballBrosGame` from the TanStack Router configuration.",
-      "reqIds": [
-        "REQ-45"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-football-bros-game-card-from-the-game-lobby-grid-in-frontend-src-pages-gamelobby-tsx-delete-the-card-entry-title-description-and-play-button-linking-to-football-bros-while-leaving-all-other-game-cards-intact",
-      "title": "Remove the Football Bros game card from the game lobby grid in `frontend/src/pages/GameLobby.tsx`. Delete the card entry (title, description, and Play button linking to `/football-bros`) while leaving all other game cards intact.",
-      "reqIds": [
-        "REQ-46"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-the-football-bros-navigation-link-from-frontend-src-components-layout-tsx-delete-the-football-bros-link-from-both-the-desktop-nav-and-the-mobile-hamburger-menu-leaving-all-other-navigation-links-intact",
-      "title": "Remove the Football Bros navigation link from `frontend/src/components/Layout.tsx`. Delete the `/football-bros` link from both the desktop nav and the mobile hamburger menu, leaving all other navigation links intact.",
-      "reqIds": [
-        "REQ-47"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-a-new-game-hook-frontend-src-hooks-useminecraftclassic3dgame-ts-that-implements-the-core-3d-first-person-minecraft-voxel-game-logic-the-hook-must-manage-a-3d-voxel-world-at-minimum-32-8-32-chunks-procedurally-generated-with-terrain-layers-grass-on-top-dirt-below-stone-deeper-bedrock-at-bottom-with-some-wood-log-blocks-and-sand-patches-a-block-registry-with-at-least-6-block-types-grass-dirt-stone-wood-log-sand-bedrock-raycasting-from-the-camera-to-detect-which-block-face-the-player-is-targeting-for-mining-and-placement-left-click-to-mine-remove-the-targeted-block-right-click-to-place-the-currently-selected-hotbar-block-on-the-targeted-face-a-hotbar-with-6-block-type-slots-player-position-and-velocity-state-for-physics-gravity-jumping-expose-all-necessary-state-and-callbacks-for-the-3d-page-component-to-consume",
-      "title": "Create a new game hook `frontend/src/hooks/useMinecraftClassic3DGame.ts` that implements the core 3D first-person Minecraft voxel game logic. The hook must manage: a 3D voxel world (at minimum 32×8×32 chunks) procedurally generated with terrain layers (grass on top, dirt below, stone deeper, bedrock at bottom, with some wood/log blocks and sand patches); a block registry with at least 6 block types (grass, dirt, stone, wood/log, sand, bedrock); raycasting from the camera to detect which block face the player is targeting (for mining and placement); left-click to mine/remove the targeted block; right-click to place the currently selected hotbar block on the targeted face; a hotbar with 6 block-type slots; player position and velocity state for physics (gravity, jumping). Expose all necessary state and callbacks for the 3D page component to consume.",
-      "reqIds": [
-        "REQ-48"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-replace-the-content-of-frontend-src-pages-minecraftclassicgame-tsx-with-a-fully-3d-first-person-voxel-game-rendered-using-react-three-fiber-three-js-remove-all-existing-2d-canvas-rendering-code-and-references-to-useminecraftclassicgame-the-new-page-must-use-react-three-fiber-s-canvas-filling-the-full-viewport-height-implement-a-first-person-camera-with-pointer-lock-controls-click-to-lock-escape-to-unlock-render-the-voxel-world-as-instanced-or-individual-box-meshes-with-distinct-neon-tinted-materials-per-block-type-consistent-with-the-retro-arcade-neon-theme-support-wasd-movement-forward-backward-strafe-space-to-jump-mouse-movement-to-look-around-support-left-click-to-mine-the-targeted-block-highlight-the-targeted-block-face-with-a-neon-outline-support-right-click-to-place-the-selected-hotbar-block-on-the-targeted-face-display-a-hotbar-hud-overlay-at-the-bottom-of-the-screen-showing-the-6-block-types-with-the-selected-slot-highlighted-in-neon-display-a-crosshair-at-the-center-of-the-screen-drive-all-game-logic-from-the-new-useminecraftclassic3dgame-hook-style-all-hud-elements-hotbar-crosshair-pointer-lock-overlay-with-the-existing-retro-neon-arcade-theme",
-      "title": "Replace the content of `frontend/src/pages/MinecraftClassicGame.tsx` with a fully 3D first-person voxel game rendered using React Three Fiber / Three.js. Remove all existing 2D canvas rendering code and references to `useMinecraftClassicGame`. The new page must: use React Three Fiber's `<Canvas>` filling the full viewport height; implement a first-person camera with pointer lock controls (click to lock, Escape to unlock); render the voxel world as instanced or individual box meshes with distinct neon-tinted materials per block type (consistent with the retro arcade neon theme); support WASD movement (forward/backward/strafe), Space to jump, mouse movement to look around; support left-click to mine the targeted block (highlight the targeted block face with a neon outline); support right-click to place the selected hotbar block on the targeted face; display a hotbar HUD overlay at the bottom of the screen showing the 6 block types with the selected slot highlighted in neon; display a crosshair at the center of the screen. Drive all game logic from the new `useMinecraftClassic3DGame` hook. Style all HUD elements (hotbar, crosshair, pointer-lock overlay) with the existing retro neon arcade theme.",
-      "reqIds": [
-        "REQ-49"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-extend-frontend-src-hooks-useminecraftclassic3dgame-ts-to-include-three-classic-mob-types-zombie-melee-chaser-skeleton-ranged-shoots-arrows-and-spider-fast-erratic-movement-mobs-spawn-procedurally-at-a-configurable-distance-from-the-player-e-g-10-20-blocks-away-and-respawn-over-time-each-mob-has-hp-a-simple-pathfinding-chase-behaviour-toward-the-player-and-an-attack-that-reduces-the-player-s-health-on-contact-or-when-a-skeleton-arrow-hits-expose-mob-state-position-type-hp-alive-in-the-hook-s-returned-state-object-so-the-3d-scene-can-render-them",
-      "title": "Extend `frontend/src/hooks/useMinecraftClassic3DGame.ts` to include three classic mob types — Zombie (melee chaser), Skeleton (ranged, shoots arrows), and Spider (fast, erratic movement). Mobs spawn procedurally at a configurable distance from the player (e.g., 10–20 blocks away) and respawn over time. Each mob has HP, a simple pathfinding/chase behaviour toward the player, and an attack that reduces the player's health on contact (or when a skeleton arrow hits). Expose mob state (position, type, HP, alive) in the hook's returned state object so the 3D scene can render them.",
-      "reqIds": [
-        "REQ-50"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-render-the-three-mob-types-as-distinct-3d-meshes-in-frontend-src-pages-minecraftclassicgame-tsx-using-react-three-fiber-zombies-green-box-figure-skeletons-white-grey-thin-box-figure-spiders-dark-grey-low-profile-wider-mesh-mobs-must-visually-move-toward-the-player-each-frame-driven-by-the-hook-s-mob-state-skeleton-arrows-must-also-be-rendered-as-small-elongated-meshes-travelling-toward-the-player",
-      "title": "Render the three mob types as distinct 3D meshes in `frontend/src/pages/MinecraftClassicGame.tsx` using React Three Fiber. Zombies: green box-figure; Skeletons: white/grey thin box-figure; Spiders: dark grey low-profile wider mesh. Mobs must visually move toward the player each frame driven by the hook's mob state. Skeleton arrows must also be rendered as small elongated meshes travelling toward the player.",
-      "reqIds": [
-        "REQ-51"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-player-survival-stats-to-frontend-src-hooks-useminecraftclassic3dgame-ts-1-health-0-20-hp-reduced-by-mob-attacks-when-it-reaches-0-the-player-respawns-at-world-origin-with-an-empty-inventory-2-hunger-0-20-drains-at-a-slow-constant-rate-over-time-when-empty-health-decreases-steadily-until-food-is-consumed-3-stamina-0-100-depletes-while-sprinting-holding-shift-or-attacking-a-mob-regenerates-automatically-when-the-player-is-idle-or-walking-at-normal-speed-expose-all-three-values-from-the-hook",
-      "title": "Add player survival stats to `frontend/src/hooks/useMinecraftClassic3DGame.ts`: (1) Health (0–20 HP) — reduced by mob attacks; when it reaches 0, the player respawns at world origin with an empty inventory. (2) Hunger (0–20) — drains at a slow constant rate over time; when empty, health decreases steadily until food is consumed. (3) Stamina (0–100) — depletes while sprinting (holding Shift) or attacking a mob; regenerates automatically when the player is idle or walking at normal speed. Expose all three values from the hook.",
-      "reqIds": [
-        "REQ-52"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-hud-overlay-to-frontend-src-pages-minecraftclassicgame-tsx-displaying-three-survival-bars-health-red-hunger-orange-yellow-and-stamina-cyan-green-positioned-at-the-bottom-of-the-screen-above-the-hotbar-each-bar-should-be-labelled-with-an-icon-or-short-text-hp-hunger-stamina-and-a-numeric-value-style-consistently-with-the-existing-retro-neon-arcade-theme-neon-glow-dark-background-pill-the-bars-update-in-real-time-from-hook-state",
-      "title": "Add a HUD overlay to `frontend/src/pages/MinecraftClassicGame.tsx` displaying three survival bars — Health (red), Hunger (orange/yellow), and Stamina (cyan/green) — positioned at the bottom of the screen above the hotbar. Each bar should be labelled with an icon or short text (❤️ HP, 🍖 Hunger, ⚡ Stamina) and a numeric value. Style consistently with the existing retro neon arcade theme (neon glow, dark background pill). The bars update in real time from hook state.",
-      "reqIds": [
-        "REQ-53"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-food-and-crafting-system-to-frontend-src-hooks-useminecraftclassic3dgame-ts-the-player-starts-with-an-empty-inventory-no-items-no-tools-food-items-e-g-apple-bread-cooked-meat-can-be-crafted-from-gathered-resources-e-g-wood-stone-wooden-pickaxe-wheat-crop-drops-bread-define-a-basic-crafting-recipe-table-with-at-least-wooden-pickaxe-2-wood-apple-drops-randomly-from-leaf-wood-blocks-bread-3-wood-or-crop-items-as-placeholder-consuming-food-restores-hunger-mining-efficiency-for-stone-blocks-requires-at-least-a-wooden-pickaxe-bare-hand-mining-of-hard-blocks-stone-bedrock-should-be-very-slow-or-ineffective-expose-inventory-contents-crafting-recipes-and-a-craftitem-recipe-callback-from-the-hook",
-      "title": "Add a food and crafting system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player starts with an empty inventory (no items, no tools). Food items (e.g., Apple, Bread, Cooked Meat) can be crafted from gathered resources (e.g., Wood + Stone → Wooden Pickaxe; Wheat/crop drops → Bread). Define a basic crafting recipe table with at least: Wooden Pickaxe (2 wood), Apple (drops randomly from leaf/wood blocks), Bread (3 wood or crop items as placeholder). Consuming food restores Hunger. Mining efficiency for stone blocks requires at least a Wooden Pickaxe — bare-hand mining of hard blocks (stone, bedrock) should be very slow or ineffective. Expose inventory contents, crafting recipes, and a `craftItem(recipe)` callback from the hook.",
-      "reqIds": [
-        "REQ-54"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-basic-crafting-ui-panel-to-frontend-src-pages-minecraftclassicgame-tsx-that-opens-when-the-player-presses-e-the-panel-lists-available-crafting-recipes-shows-the-required-ingredients-and-whether-the-player-has-enough-materials-and-provides-a-craft-button-for-each-recipe-close-the-panel-with-e-or-escape-style-consistently-with-the-retro-neon-arcade-theme-dark-modal-neon-borders-glowing-buttons",
-      "title": "Add a basic crafting UI panel to `frontend/src/pages/MinecraftClassicGame.tsx` that opens when the player presses `E`. The panel lists available crafting recipes, shows the required ingredients and whether the player has enough materials, and provides a 'Craft' button for each recipe. Close the panel with `E` or `Escape`. Style consistently with the retro neon arcade theme (dark modal, neon borders, glowing buttons).",
-      "reqIds": [
-        "REQ-55"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-an-experience-xp-system-to-frontend-src-hooks-useminecraftclassic3dgame-ts-the-player-s-xp-increases-when-a-a-diamond-block-is-mined-10-xp-per-block-or-b-a-mob-is-killed-5-xp-for-zombie-7-xp-for-skeleton-6-xp-for-spider-each-level-requires-100-xp-when-the-bar-fills-100-xp-the-level-increments-and-the-bar-resets-to-0-expose-xp-xptonextlevel-always-100-and-level-from-the-hook",
-      "title": "Add an Experience (XP) system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player's XP increases when: (a) a diamond block is mined (+10 XP per block), or (b) a mob is killed (+5 XP for Zombie, +7 XP for Skeleton, +6 XP for Spider). Each level requires 100 XP. When the bar fills (100 XP), the level increments and the bar resets to 0. Expose `xp`, `xpToNextLevel` (always 100), and `level` from the hook.",
-      "reqIds": [
-        "REQ-56"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-an-xp-bar-to-the-hud-overlay-in-frontend-src-pages-minecraftclassicgame-tsx-display-it-as-a-green-yellow-neon-progress-bar-labelled-with-xp-and-the-current-level-e-g-level-3-position-it-alongside-the-health-hunger-and-stamina-bars-in-the-bottom-hud-area-the-bar-fills-based-on-current-xp-xptonextlevel-and-resets-visually-when-a-new-level-is-reached-style-consistently-with-the-existing-retro-neon-arcade-theme",
-      "title": "Add an XP bar to the HUD overlay in `frontend/src/pages/MinecraftClassicGame.tsx`. Display it as a green/yellow neon progress bar labelled with '⭐ XP' and the current level (e.g., 'Level 3'). Position it alongside the Health, Hunger, and Stamina bars in the bottom HUD area. The bar fills based on current XP / xpToNextLevel and resets visually when a new level is reached. Style consistently with the existing retro neon arcade theme.",
-      "reqIds": [
-        "REQ-57"
       ],
       "version": 1
     }
@@ -457,135 +50,31 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Game lobby/homepage listing available games",
+      "summary": "2D platformer mechanics: running and jumping",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Snake game",
+      "summary": "Multiple levels with increasing difficulty and varied platform layouts",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Tic-Tac-Toe game",
+      "summary": "Portals that teleport the player to another location or the next level",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Memory Match game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Score tracking across games",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Add Stickman Archers game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Add OvO timed platformer game with stickman character, run/jump/slide mechanics, multiple obstacle-course levels, fastest-completion-time leaderboard integration, and lobby card",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Add Super Mario side-scrolling platformer game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "Add Pokémon turn-based battle game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-10",
-      "summary": "Add Slope endless 3D ball-rolling game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-11",
-      "summary": "Add 1v1.lol simplified build-and-shoot arena game vs AI",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-13",
-      "summary": "Add Retro Bowl simplified American football game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-14",
-      "summary": "Add Among Us simplified task-completion and impostor mini-game",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-15",
-      "summary": "Add Five Nights at Freddy's survival horror game with camera monitoring and power management",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-16",
-      "summary": "Rebuild Rocket Soccer League as a fully 3D game using React Three Fiber with 3D arena, ball physics, rocket car controls (WASD/boost), AI opponent, scoreboard, 3-minute match timer, and leaderboard integration",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-18",
-      "summary": "Delete the file `frontend/src/hooks/useFootballBrosGame.ts` entirely, removing the unused Football Bros game hook from the project.",
-      "reqIds": [
-        "REQ-44"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-19",
-      "summary": "Upgrade Minecraft Classic to full 3D first-person voxel game using React Three Fiber with pointer-lock camera, WASD movement, jump, left-click mining, right-click block placement, hotbar inventory, and multiple block types (dirt, grass, stone, wood, sand)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-20",
-      "summary": "Add classic mobs (zombie, skeleton, spider) to Minecraft Classic 3D that spawn procedurally around the player and attack on sight",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-21",
-      "summary": "Add health, hunger, and stamina HUD bars to Minecraft Classic 3D: hunger drains over time and reduces health when empty; stamina depletes on sprint/attack and regenerates when idle; death respawns player at origin with no items",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-22",
-      "summary": "Add food and crafting system to Minecraft Classic 3D: no starting inventory, player must mine/gather materials, craft tools and food (apples, bread, cooked meat) from gathered resources",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-23",
-      "summary": "Add XP bar to Minecraft Classic 3D HUD that fills when mining diamond blocks or killing mobs, showing current level when bar fills",
+      "summary": "Level goal: reach the end/exit to progress to the next stage",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "3d",
-  "projectName": "Games Website",
+  "gameProjectType": "2d",
+  "projectName": "OVO",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

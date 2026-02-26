@@ -1,23 +1,23 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-export const FIELD_W = 40;   // half-width = 20
-export const FIELD_H = 24;   // half-depth = 12
-export const GOAL_W = 8;
-export const GOAL_DEPTH = 2;
-export const GOAL_HEIGHT = 3;
-export const WALL_H = 2;
-export const BALL_RADIUS = 0.5;
-export const CAR_W = 1.6;
-export const CAR_H = 0.7;
-export const CAR_D = 2.4;
-export const CAR_SPEED = 14;
-export const CAR_BOOST_SPEED = 22;
+export const FIELD_W = 200;   // 5x original 40 — half-width = 100
+export const FIELD_H = 120;   // 5x original 24 — half-depth = 60
+export const GOAL_W = 20;     // 5x original 8 (scaled with field)
+export const GOAL_DEPTH = 8;  // 5x original ~2
+export const GOAL_HEIGHT = 10; // 5x original ~3 (scaled)
+export const WALL_H = 6;      // taller walls for bigger field
+export const BALL_RADIUS = 1.5; // bigger ball for bigger field
+export const CAR_W = 3.2;     // 2x original for better visibility
+export const CAR_H = 1.4;
+export const CAR_D = 4.8;
+export const CAR_SPEED = 40;  // faster for bigger field
+export const CAR_BOOST_SPEED = 70;
 export const CAR_TURN_SPEED = 2.2;
 export const BOOST_MAX = 100;
 export const BOOST_DRAIN = 40;
 export const BOOST_REGEN = 15;
-export const GRAVITY = -18;
+export const GRAVITY = -30;
 export const BALL_RESTITUTION = 0.65;
 export const BALL_FRICTION = 0.985;
 export const BALL_GROUND_FRICTION = 0.97;
@@ -51,7 +51,7 @@ export interface GameState {
 
 function makePlayerCar(): CarState {
   return {
-    pos: { x: 0, y: CAR_H / 2, z: FIELD_H / 2 - 4 },
+    pos: { x: 0, y: CAR_H / 2, z: FIELD_H / 2 - 15 },
     vel: { x: 0, y: 0, z: 0 },
     rot: Math.PI,
     boost: BOOST_MAX,
@@ -61,7 +61,7 @@ function makePlayerCar(): CarState {
 
 function makeAiCar(): CarState {
   return {
-    pos: { x: 0, y: CAR_H / 2, z: -(FIELD_H / 2 - 4) },
+    pos: { x: 0, y: CAR_H / 2, z: -(FIELD_H / 2 - 15) },
     vel: { x: 0, y: 0, z: 0 },
     rot: 0,
     boost: BOOST_MAX,
@@ -299,7 +299,7 @@ function updateAI(s: GameState, dt: number) {
 
   // Target: position slightly behind ball toward player's goal (positive Z)
   const targetX = ball.pos.x;
-  const targetZ = ball.pos.z + 3; // approach from behind ball toward player goal
+  const targetZ = ball.pos.z + 8; // approach from behind ball toward player goal (scaled for bigger field)
 
   const dx = targetX - ai.pos.x;
   const dz = targetZ - ai.pos.z;
@@ -314,9 +314,9 @@ function updateAI(s: GameState, dt: number) {
   while (rotDiff < -Math.PI) rotDiff += Math.PI * 2;
   ai.rot += clamp(rotDiff, -CAR_TURN_SPEED * dt * 2, CAR_TURN_SPEED * dt * 2);
 
-  // Boost when far from ball
-  const useBoost = distToBall > 8 && ai.boost > 20;
-  const fwd = distToBall > 1.5;
+  // Boost when far from ball (scaled threshold for bigger field)
+  const useBoost = distToBall > 25 && ai.boost > 20;
+  const fwd = distToBall > 3;
 
   updateCar(ai, fwd, false, false, false, useBoost, dt, -1);
 }
@@ -339,7 +339,7 @@ function updateBall(s: GameState, dt: number) {
     b.vel.y = Math.abs(b.vel.y) * BALL_RESTITUTION;
     b.vel.x *= BALL_GROUND_FRICTION;
     b.vel.z *= BALL_GROUND_FRICTION;
-    if (Math.abs(b.vel.y) < 0.3) b.vel.y = 0;
+    if (Math.abs(b.vel.y) < 0.5) b.vel.y = 0;
   }
 
   // Air friction
@@ -403,14 +403,14 @@ function carBallCollision(car: CarState, ball: BallState) {
     if (relDot < 0) {
       const impulse = -(1 + BALL_RESTITUTION) * relDot;
       ball.vel.x += normal.x * impulse;
-      ball.vel.y += normal.y * impulse + 2;
+      ball.vel.y += normal.y * impulse + 4;
       ball.vel.z += normal.z * impulse;
     }
 
     // Extra kick based on car speed
-    const kick = Math.max(carSpeed * 0.8, 3);
+    const kick = Math.max(carSpeed * 0.8, 8);
     ball.vel.x += normal.x * kick;
-    ball.vel.y += Math.abs(normal.y) * kick * 0.5 + 1;
+    ball.vel.y += Math.abs(normal.y) * kick * 0.5 + 2;
     ball.vel.z += normal.z * kick;
   }
 }

@@ -26,6 +26,10 @@ function RocketSoccerScene({
   const playerBoostRef = useRef<THREE.PointLight>(null);
   const aiBoostRef = useRef<THREE.PointLight>(null);
 
+  // Camera smoothing target
+  const camTargetPos = useRef(new THREE.Vector3(0, 20, 40));
+  const camTargetLook = useRef(new THREE.Vector3(0, 0, 0));
+
   useFrame((_, delta) => {
     update(delta);
     const s = getState();
@@ -33,12 +37,11 @@ function RocketSoccerScene({
     // Ball
     if (ballRef.current) {
       ballRef.current.position.set(s.ball.pos.x, s.ball.pos.y, s.ball.pos.z);
+      ballRef.current.rotation.x += s.ball.vel.z * delta * 0.3;
+      ballRef.current.rotation.z -= s.ball.vel.x * delta * 0.3;
       const spd = Math.sqrt(s.ball.vel.x ** 2 + s.ball.vel.z ** 2);
-      ballRef.current.rotation.x += s.ball.vel.z * delta * 0.5;
-      ballRef.current.rotation.z -= s.ball.vel.x * delta * 0.5;
-      // Glow intensity based on speed
       const mat = ballRef.current.material as THREE.MeshStandardMaterial;
-      mat.emissiveIntensity = 0.3 + Math.min(spd * 0.05, 0.7);
+      mat.emissiveIntensity = 0.3 + Math.min(spd * 0.02, 0.7);
     }
 
     // Player car
@@ -47,7 +50,7 @@ function RocketSoccerScene({
       playerCarRef.current.rotation.y = s.player.rot;
     }
     if (playerBoostRef.current) {
-      playerBoostRef.current.intensity = s.player.boosting ? 3 : 0;
+      playerBoostRef.current.intensity = s.player.boosting ? 8 : 0;
     }
 
     // AI car
@@ -56,18 +59,40 @@ function RocketSoccerScene({
       aiCarRef.current.rotation.y = s.ai.rot;
     }
     if (aiBoostRef.current) {
-      aiBoostRef.current.intensity = s.ai.boosting ? 3 : 0;
+      aiBoostRef.current.intensity = s.ai.boosting ? 8 : 0;
     }
 
-    // Camera: follow player from behind and above
+    // ── Chase camera: behind and above the player car ──────────────────────
     const px = s.player.pos.x;
+    const py = s.player.pos.y;
     const pz = s.player.pos.z;
-    const camDist = 18;
-    const camHeight = 10;
-    const camX = px * 0.3;
-    const camZ = pz + camDist;
-    camera.position.lerp(new THREE.Vector3(camX, camHeight, camZ), 0.08);
-    camera.lookAt(px * 0.2, 0, pz - 4);
+    const rot = s.player.rot;
+
+    // Direction the car is facing (forward vector)
+    const fwdX = Math.sin(rot);
+    const fwdZ = Math.cos(rot);
+
+    // Camera sits behind the car (opposite of forward direction) and above
+    const camDist = 22;   // distance behind car
+    const camHeight = 12; // height above car
+
+    // Target camera position: behind car along its heading
+    const targetCamX = px - fwdX * camDist;
+    const targetCamY = py + camHeight;
+    const targetCamZ = pz - fwdZ * camDist;
+
+    // Smooth camera position
+    camTargetPos.current.lerp(new THREE.Vector3(targetCamX, targetCamY, targetCamZ), 0.1);
+    camera.position.copy(camTargetPos.current);
+
+    // Look at a point slightly in front of the car (not the car itself, to see ahead)
+    const lookAheadDist = 15;
+    const lookX = px + fwdX * lookAheadDist;
+    const lookY = py + 2;
+    const lookZ = pz + fwdZ * lookAheadDist;
+
+    camTargetLook.current.lerp(new THREE.Vector3(lookX, lookY, lookZ), 0.12);
+    camera.lookAt(camTargetLook.current);
   });
 
   const hw = FIELD_W / 2;
@@ -75,33 +100,44 @@ function RocketSoccerScene({
 
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.35} color="#1a1a3e" />
-      <directionalLight position={[0, 20, 0]} intensity={1.2} color="#ffffff" castShadow />
-      <pointLight position={[-hw, 8, 0]} intensity={1.5} color="#00ffff" distance={30} />
-      <pointLight position={[hw, 8, 0]} intensity={1.5} color="#ff00ff" distance={30} />
-      <pointLight position={[0, 8, -hd]} intensity={1.2} color="#00ff88" distance={25} />
-      <pointLight position={[0, 8, hd]} intensity={1.2} color="#ff6600" distance={25} />
+      {/* Lighting — scaled for bigger field */}
+      <ambientLight intensity={0.4} color="#1a1a3e" />
+      <directionalLight position={[0, 80, 0]} intensity={1.5} color="#ffffff" castShadow
+        shadow-mapSize-width={2048} shadow-mapSize-height={2048}
+        shadow-camera-near={1} shadow-camera-far={300}
+        shadow-camera-left={-hw} shadow-camera-right={hw}
+        shadow-camera-top={hd} shadow-camera-bottom={-hd}
+      />
+      {/* Corner lights spread across bigger field */}
+      <pointLight position={[-hw * 0.5, 30, 0]} intensity={2} color="#00ffff" distance={120} />
+      <pointLight position={[hw * 0.5, 30, 0]} intensity={2} color="#ff00ff" distance={120} />
+      <pointLight position={[0, 30, -hd * 0.5]} intensity={1.8} color="#00ff88" distance={100} />
+      <pointLight position={[0, 30, hd * 0.5]} intensity={1.8} color="#ff6600" distance={100} />
+      {/* Extra fill lights for large field */}
+      <pointLight position={[-hw * 0.5, 25, -hd * 0.5]} intensity={1.2} color="#ffffff" distance={100} />
+      <pointLight position={[hw * 0.5, 25, -hd * 0.5]} intensity={1.2} color="#ffffff" distance={100} />
+      <pointLight position={[-hw * 0.5, 25, hd * 0.5]} intensity={1.2} color="#ffffff" distance={100} />
+      <pointLight position={[hw * 0.5, 25, hd * 0.5]} intensity={1.2} color="#ffffff" distance={100} />
 
       {/* ── Field ── */}
       <mesh position={[0, 0, 0]} receiveShadow>
-        <boxGeometry args={[FIELD_W, 0.2, FIELD_H]} />
+        <boxGeometry args={[FIELD_W, 0.4, FIELD_H]} />
         <meshStandardMaterial color="#0a1a0a" roughness={0.9} />
       </mesh>
 
       {/* Center line */}
-      <mesh position={[0, 0.11, 0]}>
-        <boxGeometry args={[FIELD_W, 0.02, 0.15]} />
+      <mesh position={[0, 0.21, 0]}>
+        <boxGeometry args={[FIELD_W, 0.04, 0.5]} />
         <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={0.8} />
       </mesh>
 
       {/* Center circle */}
-      {Array.from({ length: 32 }, (_, i) => {
-        const angle = (i / 32) * Math.PI * 2;
-        const r = 4;
+      {Array.from({ length: 48 }, (_, i) => {
+        const angle = (i / 48) * Math.PI * 2;
+        const r = 16;
         return (
-          <mesh key={i} position={[Math.cos(angle) * r, 0.11, Math.sin(angle) * r]}>
-            <boxGeometry args={[0.3, 0.02, 0.3]} />
+          <mesh key={i} position={[Math.cos(angle) * r, 0.21, Math.sin(angle) * r]}>
+            <boxGeometry args={[0.8, 0.04, 0.8]} />
             <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={0.8} />
           </mesh>
         );
@@ -110,41 +146,53 @@ function RocketSoccerScene({
       {/* Field markings — goal area lines */}
       {[-1, 1].map((side) => (
         <group key={side}>
-          <mesh position={[0, 0.11, side * (hd - 3)]}>
-            <boxGeometry args={[GOAL_W + 2, 0.02, 0.12]} />
+          <mesh position={[0, 0.21, side * (hd - 12)]}>
+            <boxGeometry args={[GOAL_W + 8, 0.04, 0.4]} />
             <meshStandardMaterial color="#ff00ff" emissive="#ff00ff" emissiveIntensity={0.6} />
           </mesh>
         </group>
       ))}
 
+      {/* Field stripe markings */}
+      {Array.from({ length: 8 }, (_, i) => {
+        const z = -hd + (i + 1) * (FIELD_H / 9);
+        if (Math.abs(z) < 5) return null;
+        return (
+          <mesh key={i} position={[0, 0.21, z]}>
+            <boxGeometry args={[FIELD_W, 0.04, 0.3]} />
+            <meshStandardMaterial color="#1a3a1a" emissive="#00ff00" emissiveIntensity={0.1} />
+          </mesh>
+        );
+      })}
+
       {/* ── Boundary walls ── */}
       {/* Left wall */}
-      <mesh position={[-hw - 0.25, WALL_H / 2, 0]}>
-        <boxGeometry args={[0.5, WALL_H, FIELD_H]} />
-        <meshStandardMaterial color="#0d0d2e" emissive="#00ffff" emissiveIntensity={0.15} transparent opacity={0.85} />
+      <mesh position={[-hw - 0.5, WALL_H / 2, 0]}>
+        <boxGeometry args={[1, WALL_H, FIELD_H]} />
+        <meshStandardMaterial color="#0d0d2e" emissive="#00ffff" emissiveIntensity={0.2} transparent opacity={0.85} />
       </mesh>
       {/* Right wall */}
-      <mesh position={[hw + 0.25, WALL_H / 2, 0]}>
-        <boxGeometry args={[0.5, WALL_H, FIELD_H]} />
-        <meshStandardMaterial color="#0d0d2e" emissive="#ff00ff" emissiveIntensity={0.15} transparent opacity={0.85} />
+      <mesh position={[hw + 0.5, WALL_H / 2, 0]}>
+        <boxGeometry args={[1, WALL_H, FIELD_H]} />
+        <meshStandardMaterial color="#0d0d2e" emissive="#ff00ff" emissiveIntensity={0.2} transparent opacity={0.85} />
       </mesh>
       {/* Back wall segments (around goals) */}
       {[-1, 1].map((side) => (
         <group key={side}>
           {/* Left segment */}
-          <mesh position={[-(hw / 2 + GOAL_W / 4 + 0.5), WALL_H / 2, side * (hd + 0.25)]}>
-            <boxGeometry args={[hw - GOAL_W / 2, WALL_H, 0.5]} />
-            <meshStandardMaterial color="#0d0d2e" emissive="#00ff88" emissiveIntensity={0.12} transparent opacity={0.85} />
+          <mesh position={[-(hw / 2 + GOAL_W / 4 + 1), WALL_H / 2, side * (hd + 0.5)]}>
+            <boxGeometry args={[hw - GOAL_W / 2, WALL_H, 1]} />
+            <meshStandardMaterial color="#0d0d2e" emissive="#00ff88" emissiveIntensity={0.15} transparent opacity={0.85} />
           </mesh>
           {/* Right segment */}
-          <mesh position={[(hw / 2 + GOAL_W / 4 + 0.5), WALL_H / 2, side * (hd + 0.25)]}>
-            <boxGeometry args={[hw - GOAL_W / 2, WALL_H, 0.5]} />
-            <meshStandardMaterial color="#0d0d2e" emissive="#00ff88" emissiveIntensity={0.12} transparent opacity={0.85} />
+          <mesh position={[(hw / 2 + GOAL_W / 4 + 1), WALL_H / 2, side * (hd + 0.5)]}>
+            <boxGeometry args={[hw - GOAL_W / 2, WALL_H, 1]} />
+            <meshStandardMaterial color="#0d0d2e" emissive="#00ff88" emissiveIntensity={0.15} transparent opacity={0.85} />
           </mesh>
           {/* Top bar over goal */}
-          <mesh position={[0, GOAL_HEIGHT + 0.15, side * (hd + 0.25)]}>
-            <boxGeometry args={[GOAL_W, 0.3, 0.5]} />
-            <meshStandardMaterial color="#0d0d2e" emissive="#00ff88" emissiveIntensity={0.12} transparent opacity={0.85} />
+          <mesh position={[0, GOAL_HEIGHT + 0.5, side * (hd + 0.5)]}>
+            <boxGeometry args={[GOAL_W, 1, 1]} />
+            <meshStandardMaterial color="#0d0d2e" emissive="#00ff88" emissiveIntensity={0.15} transparent opacity={0.85} />
           </mesh>
         </group>
       ))}
@@ -157,87 +205,102 @@ function RocketSoccerScene({
 
       {/* ── Ball ── */}
       <mesh ref={ballRef} position={[0, BALL_RADIUS, 0]} castShadow>
-        <sphereGeometry args={[BALL_RADIUS, 20, 20]} />
+        <sphereGeometry args={[BALL_RADIUS, 24, 24]} />
         <meshStandardMaterial
           color="#ffffff"
           emissive="#ffff00"
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.4}
           roughness={0.3}
           metalness={0.1}
         />
       </mesh>
 
       {/* ── Player car (cyan) ── */}
-      <group ref={playerCarRef} position={[0, CAR_H / 2, hd - 4]}>
+      <group ref={playerCarRef} position={[0, CAR_H / 2, hd - 15]}>
         {/* Body */}
         <mesh castShadow>
           <boxGeometry args={[CAR_W, CAR_H, CAR_D]} />
-          <meshStandardMaterial color="#003344" emissive="#00ffff" emissiveIntensity={0.4} roughness={0.4} metalness={0.6} />
+          <meshStandardMaterial color="#003344" emissive="#00ffff" emissiveIntensity={0.5} roughness={0.4} metalness={0.6} />
         </mesh>
         {/* Roof */}
         <mesh position={[0, CAR_H * 0.6, -CAR_D * 0.1]}>
           <boxGeometry args={[CAR_W * 0.8, CAR_H * 0.5, CAR_D * 0.6]} />
-          <meshStandardMaterial color="#004455" emissive="#00ffff" emissiveIntensity={0.3} roughness={0.4} metalness={0.6} />
+          <meshStandardMaterial color="#004455" emissive="#00ffff" emissiveIntensity={0.4} roughness={0.4} metalness={0.6} />
         </mesh>
         {/* Wheels */}
-        {[[-CAR_W / 2 - 0.1, -CAR_H / 2 + 0.15, CAR_D / 3], [CAR_W / 2 + 0.1, -CAR_H / 2 + 0.15, CAR_D / 3],
-          [-CAR_W / 2 - 0.1, -CAR_H / 2 + 0.15, -CAR_D / 3], [CAR_W / 2 + 0.1, -CAR_H / 2 + 0.15, -CAR_D / 3]].map((pos, i) => (
+        {[
+          [-CAR_W / 2 - 0.2, -CAR_H / 2 + 0.3, CAR_D / 3],
+          [CAR_W / 2 + 0.2, -CAR_H / 2 + 0.3, CAR_D / 3],
+          [-CAR_W / 2 - 0.2, -CAR_H / 2 + 0.3, -CAR_D / 3],
+          [CAR_W / 2 + 0.2, -CAR_H / 2 + 0.3, -CAR_D / 3],
+        ].map((pos, i) => (
           <mesh key={i} position={pos as [number, number, number]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.3, 0.3, 0.25, 12]} />
-            <meshStandardMaterial color="#111" emissive="#00ffff" emissiveIntensity={0.2} roughness={0.8} />
+            <cylinderGeometry args={[0.6, 0.6, 0.5, 12]} />
+            <meshStandardMaterial color="#111" emissive="#00ffff" emissiveIntensity={0.25} roughness={0.8} />
           </mesh>
         ))}
         {/* Boost flame */}
-        <pointLight ref={playerBoostRef} position={[0, 0, CAR_D / 2 + 0.3]} color="#00ffff" intensity={0} distance={5} />
-        <mesh position={[0, 0, CAR_D / 2 + 0.2]}>
-          <coneGeometry args={[0.2, 0.6, 8]} />
-          <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={0.5} transparent opacity={0.6} />
+        <pointLight ref={playerBoostRef} position={[0, 0, CAR_D / 2 + 0.5]} color="#00ffff" intensity={0} distance={12} />
+        <mesh position={[0, 0, CAR_D / 2 + 0.4]}>
+          <coneGeometry args={[0.4, 1.2, 8]} />
+          <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={0.6} transparent opacity={0.7} />
         </mesh>
-        {/* Label */}
-        <mesh position={[0, CAR_H + 0.3, 0]}>
-          <boxGeometry args={[0.8, 0.15, 0.05]} />
+        {/* Label marker */}
+        <mesh position={[0, CAR_H + 0.6, 0]}>
+          <boxGeometry args={[1.6, 0.3, 0.1]} />
           <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={1} />
         </mesh>
       </group>
 
       {/* ── AI car (magenta) ── */}
-      <group ref={aiCarRef} position={[0, CAR_H / 2, -(hd - 4)]}>
+      <group ref={aiCarRef} position={[0, CAR_H / 2, -(hd - 15)]}>
         {/* Body */}
         <mesh castShadow>
           <boxGeometry args={[CAR_W, CAR_H, CAR_D]} />
-          <meshStandardMaterial color="#330022" emissive="#ff00ff" emissiveIntensity={0.4} roughness={0.4} metalness={0.6} />
+          <meshStandardMaterial color="#330022" emissive="#ff00ff" emissiveIntensity={0.5} roughness={0.4} metalness={0.6} />
         </mesh>
         {/* Roof */}
         <mesh position={[0, CAR_H * 0.6, -CAR_D * 0.1]}>
           <boxGeometry args={[CAR_W * 0.8, CAR_H * 0.5, CAR_D * 0.6]} />
-          <meshStandardMaterial color="#440033" emissive="#ff00ff" emissiveIntensity={0.3} roughness={0.4} metalness={0.6} />
+          <meshStandardMaterial color="#440033" emissive="#ff00ff" emissiveIntensity={0.4} roughness={0.4} metalness={0.6} />
         </mesh>
         {/* Wheels */}
-        {[[-CAR_W / 2 - 0.1, -CAR_H / 2 + 0.15, CAR_D / 3], [CAR_W / 2 + 0.1, -CAR_H / 2 + 0.15, CAR_D / 3],
-          [-CAR_W / 2 - 0.1, -CAR_H / 2 + 0.15, -CAR_D / 3], [CAR_W / 2 + 0.1, -CAR_H / 2 + 0.15, -CAR_D / 3]].map((pos, i) => (
+        {[
+          [-CAR_W / 2 - 0.2, -CAR_H / 2 + 0.3, CAR_D / 3],
+          [CAR_W / 2 + 0.2, -CAR_H / 2 + 0.3, CAR_D / 3],
+          [-CAR_W / 2 - 0.2, -CAR_H / 2 + 0.3, -CAR_D / 3],
+          [CAR_W / 2 + 0.2, -CAR_H / 2 + 0.3, -CAR_D / 3],
+        ].map((pos, i) => (
           <mesh key={i} position={pos as [number, number, number]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.3, 0.3, 0.25, 12]} />
-            <meshStandardMaterial color="#111" emissive="#ff00ff" emissiveIntensity={0.2} roughness={0.8} />
+            <cylinderGeometry args={[0.6, 0.6, 0.5, 12]} />
+            <meshStandardMaterial color="#111" emissive="#ff00ff" emissiveIntensity={0.25} roughness={0.8} />
           </mesh>
         ))}
         {/* Boost flame */}
-        <pointLight ref={aiBoostRef} position={[0, 0, CAR_D / 2 + 0.3]} color="#ff00ff" intensity={0} distance={5} />
-        <mesh position={[0, 0, CAR_D / 2 + 0.2]}>
-          <coneGeometry args={[0.2, 0.6, 8]} />
-          <meshStandardMaterial color="#ff00ff" emissive="#ff00ff" emissiveIntensity={0.5} transparent opacity={0.6} />
+        <pointLight ref={aiBoostRef} position={[0, 0, CAR_D / 2 + 0.5]} color="#ff00ff" intensity={0} distance={12} />
+        <mesh position={[0, 0, CAR_D / 2 + 0.4]}>
+          <coneGeometry args={[0.4, 1.2, 8]} />
+          <meshStandardMaterial color="#ff00ff" emissive="#ff00ff" emissiveIntensity={0.6} transparent opacity={0.7} />
         </mesh>
-        {/* Label */}
-        <mesh position={[0, CAR_H + 0.3, 0]}>
-          <boxGeometry args={[0.8, 0.15, 0.05]} />
+        {/* Label marker */}
+        <mesh position={[0, CAR_H + 0.6, 0]}>
+          <boxGeometry args={[1.6, 0.3, 0.1]} />
           <meshStandardMaterial color="#ff00ff" emissive="#ff00ff" emissiveIntensity={1} />
         </mesh>
       </group>
 
-      {/* Stadium atmosphere — corner lights */}
+      {/* Stadium atmosphere — corner pylons */}
       {[[-hw, 0, -hd], [hw, 0, -hd], [-hw, 0, hd], [hw, 0, hd]].map((pos, i) => (
         <mesh key={i} position={pos as [number, number, number]}>
-          <boxGeometry args={[0.5, 12, 0.5]} />
-          <meshStandardMaterial color="#1a1a2e" emissive="#ffffff" emissiveIntensity={0.05} />
+          <boxGeometry args={[2, 40, 2]} />
+          <meshStandardMaterial color="#1a1a2e" emissive="#ffffff" emissiveIntensity={0.08} />
+        </mesh>
+      ))}
+      {/* Mid-field pylons */}
+      {[[-hw, 0, 0], [hw, 0, 0]].map((pos, i) => (
+        <mesh key={`mid-${i}`} position={pos as [number, number, number]}>
+          <boxGeometry args={[2, 35, 2]} />
+          <meshStandardMaterial color="#1a1a2e" emissive="#ffffff" emissiveIntensity={0.06} />
         </mesh>
       ))}
     </>
@@ -246,32 +309,31 @@ function RocketSoccerScene({
 
 // ─── Goal frame component ─────────────────────────────────────────────────────
 function GoalFrame({ posZ, color }: { posZ: number; color: string }) {
-  const hd = FIELD_H / 2;
   const sign = posZ > 0 ? 1 : -1;
   return (
     <group>
       {/* Back wall */}
       <mesh position={[0, GOAL_HEIGHT / 2, posZ + sign * GOAL_DEPTH / 2]}>
-        <boxGeometry args={[GOAL_W, GOAL_HEIGHT, 0.15]} />
-        <meshStandardMaterial color="#050510" emissive={color} emissiveIntensity={0.15} transparent opacity={0.5} />
+        <boxGeometry args={[GOAL_W, GOAL_HEIGHT, 0.4]} />
+        <meshStandardMaterial color="#050510" emissive={color} emissiveIntensity={0.2} transparent opacity={0.5} />
       </mesh>
       {/* Left post */}
       <mesh position={[-GOAL_W / 2, GOAL_HEIGHT / 2, posZ]}>
-        <boxGeometry args={[0.2, GOAL_HEIGHT, GOAL_DEPTH]} />
-        <meshStandardMaterial color="#111" emissive={color} emissiveIntensity={0.8} />
+        <boxGeometry args={[0.6, GOAL_HEIGHT, GOAL_DEPTH]} />
+        <meshStandardMaterial color="#111" emissive={color} emissiveIntensity={0.9} />
       </mesh>
       {/* Right post */}
       <mesh position={[GOAL_W / 2, GOAL_HEIGHT / 2, posZ]}>
-        <boxGeometry args={[0.2, GOAL_HEIGHT, GOAL_DEPTH]} />
-        <meshStandardMaterial color="#111" emissive={color} emissiveIntensity={0.8} />
+        <boxGeometry args={[0.6, GOAL_HEIGHT, GOAL_DEPTH]} />
+        <meshStandardMaterial color="#111" emissive={color} emissiveIntensity={0.9} />
       </mesh>
       {/* Crossbar */}
       <mesh position={[0, GOAL_HEIGHT, posZ]}>
-        <boxGeometry args={[GOAL_W + 0.2, 0.2, GOAL_DEPTH]} />
-        <meshStandardMaterial color="#111" emissive={color} emissiveIntensity={0.8} />
+        <boxGeometry args={[GOAL_W + 0.6, 0.6, GOAL_DEPTH]} />
+        <meshStandardMaterial color="#111" emissive={color} emissiveIntensity={0.9} />
       </mesh>
       {/* Goal light */}
-      <pointLight position={[0, GOAL_HEIGHT / 2, posZ + sign * 0.5]} color={color} intensity={0.8} distance={8} />
+      <pointLight position={[0, GOAL_HEIGHT / 2, posZ + sign * 1.5]} color={color} intensity={1.5} distance={25} />
     </group>
   );
 }
@@ -394,7 +456,10 @@ export default function RocketSoccerLeagueGame() {
             </div>
 
             {/* ── 3D Canvas ── */}
-            <Canvas camera={{ position: [0, 10, 18], fov: 70 }} shadows>
+            <Canvas
+              camera={{ position: [0, 20, 40], fov: 75, far: 2000 }}
+              shadows
+            >
               <RocketSoccerScene getState={getState} update={update} />
             </Canvas>
 
@@ -408,50 +473,42 @@ export default function RocketSoccerLeagueGame() {
                 <p className="font-pixel text-xs text-arcade-muted mb-8 tracking-wider">SCORE MORE GOALS THAN THE AI</p>
                 <button
                   onClick={start}
-                  className="btn-neon-cyan font-pixel text-sm px-8 py-3 rounded-lg tracking-widest"
+                  className="neon-btn font-pixel text-sm px-8 py-3 tracking-widest"
                 >
-                  ▶ KICK OFF
+                  KICK OFF!
                 </button>
+                <div className="mt-6 text-center space-y-1">
+                  <p className="font-pixel text-[9px] text-arcade-muted tracking-wider">WASD / ARROWS — DRIVE</p>
+                  <p className="font-pixel text-[9px] text-arcade-muted tracking-wider">SHIFT / SPACE — BOOST</p>
+                  <p className="font-pixel text-[9px] text-neon-cyan tracking-wider">CHASE CAM FOLLOWS YOUR CAR</p>
+                </div>
               </div>
             )}
 
             {/* ── Finished overlay ── */}
             {uiState.phase === 'finished' && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 z-20 px-4">
-                <p className="font-pixel text-xs text-arcade-muted mb-3 tracking-widest">FINAL SCORE</p>
-                <div className="flex items-center gap-6 mb-4">
-                  <div className="text-center">
-                    <p className="font-pixel text-[10px] text-neon-cyan mb-1">YOU</p>
-                    <p className="font-pixel text-4xl text-neon-cyan" style={{ textShadow: '0 0 16px #00ffff' }}>
-                      {uiState.playerScore}
-                    </p>
-                  </div>
-                  <p className="font-pixel text-2xl text-arcade-muted">—</p>
-                  <div className="text-center">
-                    <p className="font-pixel text-[10px] text-neon-pink mb-1">AI</p>
-                    <p className="font-pixel text-4xl text-neon-pink" style={{ textShadow: '0 0 16px #ff00ff' }}>
-                      {uiState.aiScore}
-                    </p>
-                  </div>
-                </div>
-
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 z-20">
                 <p
-                  className="font-pixel text-xl mb-6 tracking-widest"
+                  className="font-pixel text-xl mb-1 tracking-widest"
                   style={{
-                    color: playerWon ? '#00ffff' : isDraw ? '#ffcc00' : '#ff00ff',
-                    textShadow: playerWon ? '0 0 20px #00ffff' : isDraw ? '0 0 20px #ffcc00' : '0 0 20px #ff00ff',
+                    color: isDraw ? '#ffcc00' : playerWon ? '#00ffff' : '#ff00ff',
+                    textShadow: `0 0 20px ${isDraw ? '#ffcc00' : playerWon ? '#00ffff' : '#ff00ff'}`,
                   }}
                 >
-                  {playerWon ? '🏆 YOU WIN!' : isDraw ? '🤝 DRAW!' : '💀 AI WINS!'}
+                  {isDraw ? 'DRAW!' : playerWon ? 'YOU WIN!' : 'AI WINS!'}
+                </p>
+                <p className="font-pixel text-xs text-arcade-muted mb-2 tracking-wider">FINAL SCORE</p>
+                <p className="font-pixel text-3xl text-white mb-6">
+                  <span className="text-neon-cyan">{uiState.playerScore}</span>
+                  <span className="text-arcade-muted mx-3">—</span>
+                  <span className="text-neon-pink">{uiState.aiScore}</span>
                 </p>
 
                 {playerWon && !scoreSubmitted && (
-                  <div className="mb-4 w-72">
+                  <div className="mb-4 w-64">
                     <ScoreSubmission
-                      game="rocket-soccer-league"
                       score={uiState.playerScore}
-                      label="SAVE WIN"
-                      scoreSuffix="goals"
+                      game="rocket-soccer-league"
                       onSubmitted={() => setScoreSubmitted(true)}
                     />
                   </div>
@@ -459,56 +516,41 @@ export default function RocketSoccerLeagueGame() {
 
                 <button
                   onClick={restart}
-                  className="btn-neon-cyan font-pixel text-sm px-8 py-3 rounded-lg tracking-widest"
+                  className="neon-btn font-pixel text-xs px-6 py-2 tracking-widest"
                 >
-                  ▶ PLAY AGAIN
+                  PLAY AGAIN
                 </button>
               </div>
             )}
           </div>
 
-          {/* Controls guide */}
-          <div className="mt-4 bg-arcade-card rounded-xl border border-neon-cyan/20 p-4">
-            <p className="font-pixel text-xs text-arcade-muted tracking-wider mb-3">CONTROLS</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-arcade-muted font-sans">
-              <div className="flex flex-col gap-1">
-                <span className="font-pixel text-[9px] text-neon-cyan">MOVE</span>
-                <span>W / ↑ — Forward</span>
-                <span>S / ↓ — Reverse</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-pixel text-[9px] text-neon-cyan">STEER</span>
-                <span>A / ← — Turn Left</span>
-                <span>D / → — Turn Right</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-pixel text-[9px] text-neon-yellow">BOOST</span>
-                <span>Shift / Space</span>
-                <span>Recharges over time</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-pixel text-[9px] text-neon-pink">GOAL</span>
-                <span>Hit ball into AI goal</span>
-                <span>(far end — cyan)</span>
-              </div>
-            </div>
+          {/* Controls reminder */}
+          <div className="mt-3 flex flex-wrap gap-4 justify-center">
+            <span className="font-pixel text-[9px] text-arcade-muted tracking-wider">WASD / ARROWS — DRIVE</span>
+            <span className="font-pixel text-[9px] text-arcade-muted tracking-wider">SHIFT / SPACE — BOOST</span>
+            <span className="font-pixel text-[9px] text-neon-cyan tracking-wider">CHASE CAM — FOLLOWS YOUR CAR</span>
           </div>
         </div>
 
-        {/* Leaderboard sidebar */}
-        <div className="lg:w-64 flex flex-col gap-4">
-          <Leaderboard game="rocket-soccer-league" title="TOP SCORERS" accentColor="neon-cyan" />
-          {uiState.phase === 'finished' && (
-            <div className="bg-arcade-card rounded-xl border border-neon-cyan/20 p-4">
-              <p className="font-pixel text-[10px] text-arcade-muted tracking-wider mb-2">MATCH RESULT</p>
-              <p className="font-pixel text-xs text-neon-cyan">
-                {playerWon ? '🏆 VICTORY' : isDraw ? '🤝 DRAW' : '💀 DEFEAT'}
-              </p>
-              <p className="font-pixel text-[9px] text-arcade-muted mt-1">
-                {uiState.playerScore} — {uiState.aiScore}
-              </p>
-            </div>
-          )}
+        {/* Sidebar */}
+        <div className="lg:w-64 space-y-4">
+          <Leaderboard game="rocket-soccer-league" title="TOP SCORES" accentColor="neon-cyan" />
+          <div className="bg-arcade-card rounded-xl border border-neon-cyan/20 p-4">
+            <p className="font-pixel text-[9px] text-neon-cyan tracking-widest mb-3">HOW TO PLAY</p>
+            <ul className="space-y-2">
+              {[
+                'Drive your cyan car into the ball',
+                "Knock it into the AI's goal (far end)",
+                'Use BOOST for speed bursts',
+                'Score more goals in 3 minutes',
+                'Chase cam follows your car',
+              ].map((tip, i) => (
+                <li key={i} className="font-pixel text-[8px] text-arcade-muted leading-relaxed">
+                  <span className="text-neon-cyan mr-1">›</span>{tip}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

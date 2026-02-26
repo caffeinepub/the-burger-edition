@@ -1,101 +1,68 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T19:52:23.910Z",
+  "generatedAt": "2026-02-26T15:51:31.173Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 8,
-    "implemented": 8,
+    "total": 5,
+    "implemented": 5,
     "items": [
       {
-        "id": "REQ-50",
-        "summary": "Extend `frontend/src/hooks/useMinecraftClassic3DGame.ts` to include three classic mob types — Zombie (melee chaser), Skeleton (ranged, shoots arrows), and Spider (fast, erratic movement). Mobs spawn procedurally at a configurable distance from the player (e.g., 10–20 blocks away) and respawn over time. Each mob has HP, a simple pathfinding/chase behaviour toward the player, and an attack that reduces the player's health on contact (or when a skeleton arrow hits). Expose mob state (position, type, HP, alive) in the hook's returned state object so the 3D scene can render them.",
+        "id": "REQ-1",
+        "summary": "Implement core 2D platformer mechanics in useOvoGame.ts including smooth running, jumping, wall-jumping, sliding, coyote time, and gravity-based physics for the player character.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+          "frontend/src/hooks/useOvoGame.ts"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+          "frontend/src/hooks/useOvoGame.ts"
         ]
       },
       {
-        "id": "REQ-51",
-        "summary": "Render the three mob types as distinct 3D meshes in `frontend/src/pages/MinecraftClassicGame.tsx` using React Three Fiber. Zombies: green box-figure; Skeletons: white/grey thin box-figure; Spiders: dark grey low-profile wider mesh. Mobs must visually move toward the player each frame driven by the hook's mob state. Skeleton arrows must also be rendered as small elongated meshes travelling toward the player.",
+        "id": "REQ-2",
+        "summary": "Design and implement at least 10 platformer levels in useOvoGame.ts with increasing difficulty, varied platform layouts, hazards, gaps, and moving platforms.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
+          "frontend/src/hooks/useOvoGame.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
+          "frontend/src/hooks/useOvoGame.ts"
         ]
       },
       {
-        "id": "REQ-52",
-        "summary": "Add player survival stats to `frontend/src/hooks/useMinecraftClassic3DGame.ts`: (1) Health (0–20 HP) — reduced by mob attacks; when it reaches 0, the player respawns at world origin with an empty inventory. (2) Hunger (0–20) — drains at a slow constant rate over time; when empty, health decreases steadily until food is consumed. (3) Stamina (0–100) — depletes while sprinting (holding Shift) or attacking a mob; regenerates automatically when the player is idle or walking at normal speed. Expose all three values from the hook.",
+        "id": "REQ-3",
+        "summary": "Implement portal objects in useOvoGame.ts that, when the player touches them, teleport the player to a specified target position within the same level or to the start of a specified level.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+          "frontend/src/hooks/useOvoGame.ts"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+          "frontend/src/hooks/useOvoGame.ts"
         ]
       },
       {
-        "id": "REQ-53",
-        "summary": "Add a HUD overlay to `frontend/src/pages/MinecraftClassicGame.tsx` displaying three survival bars — Health (red), Hunger (orange/yellow), and Stamina (cyan/green) — positioned at the bottom of the screen above the hotbar. Each bar should be labelled with an icon or short text (❤️ HP, 🍖 Hunger, ⚡ Stamina) and a numeric value. Style consistently with the existing retro neon arcade theme (neon glow, dark background pill). The bars update in real time from hook state.",
+        "id": "REQ-4",
+        "summary": "Implement a level exit/end goal in each level in useOvoGame.ts. When the player reaches the exit, they progress to the next level. After the final level, the game is considered complete and the score (time elapsed) is submitted.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
+          "frontend/src/hooks/useOvoGame.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
+          "frontend/src/hooks/useOvoGame.ts"
         ]
       },
       {
-        "id": "REQ-54",
-        "summary": "Add a food and crafting system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player starts with an empty inventory (no items, no tools). Food items (e.g., Apple, Bread, Cooked Meat) can be crafted from gathered resources (e.g., Wood + Stone → Wooden Pickaxe; Wheat/crop drops → Bread). Define a basic crafting recipe table with at least: Wooden Pickaxe (2 wood), Apple (drops randomly from leaf/wood blocks), Bread (3 wood or crop items as placeholder). Consuming food restores Hunger. Mining efficiency for stone blocks requires at least a Wooden Pickaxe — bare-hand mining of hard blocks (stone, bedrock) should be very slow or ineffective. Expose inventory contents, crafting recipes, and a `craftItem(recipe)` callback from the hook.",
+        "id": "REQ-5",
+        "summary": "Update OvoGame.tsx to render portals on the canvas with a visually distinctive animated appearance (e.g., pulsing glow or swirl), display the current level number, and show a game-complete screen with score submission and leaderboard when all levels are finished.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
+          "frontend/src/pages/OvoGame.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
-        ]
-      },
-      {
-        "id": "REQ-55",
-        "summary": "Add a basic crafting UI panel to `frontend/src/pages/MinecraftClassicGame.tsx` that opens when the player presses `E`. The panel lists available crafting recipes, shows the required ingredients and whether the player has enough materials, and provides a 'Craft' button for each recipe. Close the panel with `E` or `Escape`. Style consistently with the retro neon arcade theme (dark modal, neon borders, glowing buttons).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
-        ]
-      },
-      {
-        "id": "REQ-56",
-        "summary": "Add an Experience (XP) system to `frontend/src/hooks/useMinecraftClassic3DGame.ts`. The player's XP increases when: (a) a diamond block is mined (+10 XP per block), or (b) a mob is killed (+5 XP for Zombie, +7 XP for Skeleton, +6 XP for Spider). Each level requires 100 XP. When the bar fills (100 XP), the level increments and the bar resets to 0. Expose `xp`, `xpToNextLevel` (always 100), and `level` from the hook.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useMinecraftClassic3DGame.ts"
-        ]
-      },
-      {
-        "id": "REQ-57",
-        "summary": "Add an XP bar to the HUD overlay in `frontend/src/pages/MinecraftClassicGame.tsx`. Display it as a green/yellow neon progress bar labelled with '⭐ XP' and the current level (e.g., 'Level 3'). Position it alongside the Health, Hunger, and Stamina bars in the bottom HUD area. The bar fills based on current XP / xpToNextLevel and resets visually when a new level is reached. Style consistently with the existing retro neon arcade theme.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/MinecraftClassicGame.tsx"
+          "frontend/src/pages/OvoGame.tsx"
         ]
       }
     ]
@@ -105,8 +72,8 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/hooks/useMinecraftClassic3DGame.ts",
-    "frontend/src/pages/MinecraftClassicGame.tsx",
+    "frontend/src/hooks/useOvoGame.ts",
+    "frontend/src/pages/OvoGame.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
