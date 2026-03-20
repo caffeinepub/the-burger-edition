@@ -199,6 +199,34 @@ const games = [
     tag: '3D SPORTS',
     emoji: '🚗',
   },
+  {
+    id: 'rocket-soccer-derby',
+    title: 'ROCKET SOCCER DERBY',
+    description: '3D soccer on a massive 5× field with rocket-powered cars! Hit Space for rocket boost and score epic goals!',
+    icon: null,
+    route: '/rocket-soccer-derby',
+    accentClass: 'text-neon-yellow',
+    borderClass: 'border-neon-yellow/40 hover:border-neon-yellow',
+    glowClass: 'hover:shadow-neon-yellow',
+    badgeClass: 'bg-neon-yellow/10 text-neon-yellow',
+    btnClass: 'btn-neon-yellow',
+    tag: '3D DERBY',
+    emoji: '⚽🚀',
+  },
+  {
+    id: 'f19-flight-simulator',
+    title: 'F-19 FLIGHT SIMULATOR',
+    description: 'Fly a stealth F-19 fighter jet in a full 3D world! Take off from the runway, soar over terrain, and land on an aircraft carrier.',
+    icon: null,
+    route: '/f19-flight-simulator',
+    accentClass: 'text-neon-green',
+    borderClass: 'border-neon-green/40 hover:border-neon-green',
+    glowClass: 'hover:shadow-neon-green',
+    badgeClass: 'bg-neon-green/10 text-neon-green',
+    btnClass: 'btn-neon-green',
+    tag: '3D FLIGHT',
+    emoji: '✈️',
+  },
 ];
 
 const leaderboards = [
@@ -245,45 +273,41 @@ export default function GameLobby() {
           {games.map((game) => (
             <div
               key={game.id}
-              className={`group relative bg-arcade-card rounded-xl border-2 ${game.borderClass} ${game.glowClass} transition-all duration-300 overflow-hidden cursor-pointer`}
+              className={`bg-arcade-surface border ${game.borderClass} rounded-xl p-5 flex flex-col gap-3 transition-all duration-200 cursor-pointer ${game.glowClass}`}
               onClick={() => navigate({ to: game.route })}
             >
-              {/* Tag */}
-              <div className={`absolute top-3 right-3 font-pixel text-[10px] px-2 py-1 rounded ${game.badgeClass} tracking-widest`}>
-                {game.tag}
-              </div>
-
-              {/* Icon */}
-              <div className="flex justify-center pt-8 pb-4">
+              {/* Icon / emoji */}
+              <div className="flex items-center justify-between">
                 {game.icon ? (
-                  <img
-                    src={game.icon}
-                    alt={game.title}
-                    className="w-16 h-16 object-contain pixelated"
-                  />
+                  <img src={game.icon} alt={game.title} className="w-12 h-12 rounded-lg object-cover" />
                 ) : (
-                  <span className="text-5xl">{game.emoji}</span>
+                  <span className="text-3xl">{game.emoji}</span>
                 )}
+                <span className={`font-pixel text-[9px] px-2 py-1 rounded ${game.badgeClass}`}>
+                  {game.tag}
+                </span>
               </div>
 
-              {/* Content */}
-              <div className="px-4 pb-5">
-                <h3 className={`font-pixel text-sm ${game.accentClass} mb-2 tracking-wider leading-relaxed`}>
-                  {game.title}
-                </h3>
-                <p className="font-pixel text-[10px] text-arcade-muted leading-relaxed mb-4 tracking-wide">
-                  {game.description}
-                </p>
-                <button
-                  className={`w-full ${game.btnClass} font-pixel text-xs py-2 tracking-widest`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate({ to: game.route });
-                  }}
-                >
-                  PLAY NOW
-                </button>
-              </div>
+              {/* Title */}
+              <h3 className={`font-pixel text-xs ${game.accentClass} tracking-wider leading-relaxed`}>
+                {game.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-arcade-muted text-xs leading-relaxed flex-1">
+                {game.description}
+              </p>
+
+              {/* Play button */}
+              <button
+                className={`w-full font-pixel text-[10px] py-2 px-4 rounded ${game.btnClass} tracking-widest`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate({ to: game.route });
+                }}
+              >
+                PLAY
+              </button>
             </div>
           ))}
         </div>
@@ -293,7 +317,7 @@ export default function GameLobby() {
       <section>
         <div className="flex items-center gap-3 mb-6">
           <Trophy className="w-5 h-5 text-neon-yellow" />
-          <h2 className="font-pixel text-lg text-arcade-text tracking-widest">HALL OF FAME</h2>
+          <h2 className="font-pixel text-lg text-arcade-text tracking-widest">LEADERBOARDS</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {leaderboards.map((lb) => (

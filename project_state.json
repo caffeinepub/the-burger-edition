@@ -1,60 +1,40 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "3D 1v1 battle game (like 1v1.lol) built with Three.js/React Three Fiber. Features four weapons switchable via number keys (Sniper 1-bullet, Shotgun 5-shots, Pistol 20-shots, Machine Gun 25-bullets) and AI difficulty levels (Easy/Medium/Hard/Extreme) scaling by reaction time. AI switches weapons based on distance and difficulty.",
-  "architectural_notes": [
-    "3D game built with Three.js or React Three Fiber",
-    "Weapon system: Sniper (1 bullet), Shotgun (5 shots), Pistol (20 shots), Machine Gun (25 bullets); switched via number keys 1-4",
-    "AI scaling: Easy/Medium/Hard/Extreme — primary differentiator is reaction time; also affects accuracy and aggression"
-  ],
+  "summary": "A top-down/side-scrolling aerial combat game with missiles, flares, a coin shop, and now Phase 3 being built: a step-by-step tutorial mode, new enemy types (fast jets, armored enemies, missile drones, ground turrets), and progressive levels with combined win conditions (survive, destroy, score, protect).",
+  "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-create-a-new-react-three-fiber-three-js-game-hook-use1v1lol3dgame-ts-that-implements-a-3d-first-person-third-person-1v1-battle-game-the-hook-must-manage-player-state-position-hp-current-weapon-ammo-ai-bot-state-position-hp-current-weapon-ammo-difficulty-projectile-physics-and-collision-detection-in-a-3d-arena",
-      "title": "Create a new React Three Fiber / Three.js game hook `use1v1Lol3DGame.ts` that implements a 3D first-person/third-person 1v1 battle game. The hook must manage: player state (position, HP, current weapon, ammo), AI bot state (position, HP, current weapon, ammo, difficulty), projectile physics, and collision detection in a 3D arena.",
+      "id": "feature-add-a-step-by-step-tutorial-mode-to-the-f-19-flight-simulator-that-walks-players-through-each-core-mechanic-in-sequence-basic-movement-w-a-s-d-or-equivalent-throttle-control-shooting-enemies-locking-on-with-targeting-dodging-incoming-missiles-and-deploying-flares-as-countermeasures-each-step-should-display-a-clear-on-screen-prompt-overlay-describing-the-action-required-and-only-advance-to-the-next-step-once-the-player-successfully-performs-it",
+      "title": "Add a step-by-step Tutorial Mode to the F-19 Flight Simulator that walks players through each core mechanic in sequence: basic movement (W/A/S/D or equivalent), throttle control, shooting enemies, locking on with targeting, dodging incoming missiles, and deploying flares as countermeasures. Each step should display a clear on-screen prompt/overlay describing the action required and only advance to the next step once the player successfully performs it.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-four-weapons-in-the-game-hook-switchable-via-number-keys-1-4-sniper-1-bullet-slow-reload-2-5s-high-damage-80-shotgun-5-shots-medium-reload-1-5s-spread-pattern-medium-damage-15-per-pellet-6-pellets-pistol-20-shots-fast-reload-0-8s-medium-damage-25-machine-gun-25-bullets-medium-reload-1-2s-rapid-fire-lower-damage-12-per-bullet-each-weapon-tracks-current-ammo-and-reload-state",
-      "title": "Implement four weapons in the game hook, switchable via number keys 1–4: Sniper (1 bullet, slow reload ~2.5s, high damage ~80), Shotgun (5 shots, medium reload ~1.5s, spread pattern, medium damage ~15 per pellet × 6 pellets), Pistol (20 shots, fast reload ~0.8s, medium damage ~25), Machine Gun (25 bullets, medium reload ~1.2s, rapid fire, lower damage ~12 per bullet). Each weapon tracks current ammo and reload state.",
+      "id": "feature-implement-four-new-enemy-types-in-the-f-19-flight-simulator-each-with-distinct-behavior-and-visual-appearance-1-fast-jets-high-speed-aircraft-that-are-difficult-to-track-and-require-lead-aiming-2-armored-enemies-enemies-that-require-multiple-hits-to-destroy-with-a-visible-health-bar-showing-remaining-hp-3-missile-launching-drones-enemies-that-fire-homing-missiles-at-the-player-requiring-flare-countermeasures-to-evade-4-ground-to-air-turrets-static-ground-based-enemies-that-fire-rapid-projectiles-at-low-altitude-aircraft-each-type-should-have-a-distinct-3d-geometry-appearance-and-award-different-coin-score-values-on-destruction",
+      "title": "Implement four new enemy types in the F-19 Flight Simulator, each with distinct behavior and visual appearance: (1) Fast Jets — high-speed aircraft that are difficult to track and require lead-aiming; (2) Armored Enemies — enemies that require multiple hits to destroy, with a visible health bar showing remaining HP; (3) Missile-Launching Drones — enemies that fire homing missiles at the player, requiring flare countermeasures to evade; (4) Ground-to-Air Turrets — static ground-based enemies that fire rapid projectiles at low-altitude aircraft. Each type should have a distinct 3D geometry/appearance and award different coin/score values on destruction.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-four-ai-difficulty-levels-easy-medium-hard-extreme-that-scale-by-reaction-time-and-accuracy-easy-1500ms-reaction-delay-40-accuracy-medium-800ms-reaction-60-accuracy-hard-350ms-reaction-80-accuracy-extreme-80ms-reaction-95-accuracy-the-ai-bot-dynamically-switches-weapons-based-on-distance-to-player-sniper-at-long-range-shotgun-at-close-range-pistol-machine-gun-at-medium-range-with-weapon-switching-thresholds-scaled-by-difficulty-player-selects-difficulty-on-a-pre-game-screen",
-      "title": "Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) that scale by reaction time and accuracy. Easy: 1500ms reaction delay, 40% accuracy. Medium: 800ms reaction, 60% accuracy. Hard: 350ms reaction, 80% accuracy. Extreme: 80ms reaction, 95% accuracy. The AI bot dynamically switches weapons based on distance to player (Sniper at long range, Shotgun at close range, Pistol/Machine Gun at medium range) with weapon switching thresholds scaled by difficulty. Player selects difficulty on a pre-game screen.",
+      "id": "feature-add-a-progressive-levels-system-to-the-f-19-flight-simulator-with-at-least-6-levels-of-escalating-difficulty-each-level-should-combine-multiple-win-conditions-chosen-from-survive-for-x-seconds-destroy-x-enemies-reach-a-score-threshold-and-protect-an-objective-e-g-a-carrier-or-ground-base-difficulty-should-escalate-across-levels-by-increasing-enemy-count-enemy-speed-missile-frequency-and-introducing-new-enemy-types-from-req-2-at-later-levels-each-level-should-display-its-objectives-clearly-at-the-start-and-track-progress-in-the-hud-during-play-a-level-complete-screen-should-show-results-and-allow-progression-to-the-next-level",
+      "title": "Add a Progressive Levels system to the F-19 Flight Simulator with at least 6 levels of escalating difficulty. Each level should combine multiple win conditions chosen from: survive for X seconds, destroy X enemies, reach a score threshold, and protect an objective (e.g., a carrier or ground base). Difficulty should escalate across levels by increasing enemy count, enemy speed, missile frequency, and introducing new enemy types from REQ-2 at later levels. Each level should display its objectives clearly at the start and track progress in the HUD during play. A level-complete screen should show results and allow progression to the next level.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-build-a-3d-arena-scene-in-the-page-component-onelolgame-tsx-using-react-three-fiber-the-arena-should-include-a-flat-ground-plane-perimeter-walls-and-several-cover-obstacles-boxes-pillars-scattered-around-use-pointer-lock-controls-or-orbit-style-wasd-movement-so-the-player-can-navigate-the-arena-in-3d-render-the-ai-bot-as-a-visible-3d-mesh-that-moves-around-the-arena-display-projectile-meshes-small-spheres-or-cylinders-that-travel-through-the-scene",
-      "title": "Build a 3D arena scene in the page component `OneLolGame.tsx` using React Three Fiber. The arena should include a flat ground plane, perimeter walls, and several cover obstacles (boxes/pillars) scattered around. Use pointer-lock controls or orbit-style WASD movement so the player can navigate the arena in 3D. Render the AI bot as a visible 3D mesh that moves around the arena. Display projectile meshes (small spheres or cylinders) that travel through the scene.",
+      "id": "feature-add-a-level-select-mode-select-screen-to-the-f-19-flight-simulator-that-lets-players-choose-between-tutorial-mode-req-1-and-progressive-levels-req-3-the-screen-should-show-each-level-s-name-difficulty-rating-and-locked-unlocked-status-completed-levels-should-display-the-player-s-best-score",
+      "title": "Add a Level Select / Mode Select screen to the F-19 Flight Simulator that lets players choose between Tutorial Mode (REQ-1) and Progressive Levels (REQ-3). The screen should show each level's name, difficulty rating, and locked/unlocked status. Completed levels should display the player's best score.",
       "reqIds": [
         "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-an-in-game-hud-overlaid-on-the-3d-canvas-showing-player-hp-bar-ai-bot-hp-bar-current-weapon-name-and-ammo-e-g-pistol-18-20-reload-progress-bar-when-reloading-selected-difficulty-label-and-a-crosshair-in-the-center-of-the-screen",
-      "title": "Add an in-game HUD overlaid on the 3D canvas showing: player HP bar, AI bot HP bar, current weapon name and ammo (e.g. 'Pistol 18/20'), reload progress bar when reloading, selected difficulty label, and a crosshair in the center of the screen.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-show-a-game-over-screen-when-either-the-player-or-ai-bot-reaches-0-hp-display-who-won-the-match-result-and-a-play-again-button-that-resets-the-game-returning-to-difficulty-selection-integrate-score-submission-using-the-existing-scoresubmission-component-when-the-player-wins",
-      "title": "Show a game-over screen when either the player or AI bot reaches 0 HP. Display who won, the match result, and a 'Play Again' button that resets the game (returning to difficulty selection). Integrate score submission using the existing ScoreSubmission component when the player wins.",
-      "reqIds": [
-        "REQ-6"
       ],
       "version": 1
     }
@@ -62,31 +42,25 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "3D arena environment using Three.js/React Three Fiber",
+      "summary": "Tutorial mode with step-by-step guided mechanic walkthrough (movement, shooting, dodging, flares)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Four weapons with number key switching: Sniper (1 bullet), Shotgun (5 shots), Pistol (20 shots), Machine Gun (25 bullets)",
+      "summary": "New enemy types: fast jets, armored enemies, missile-launching drones, ground-to-air turrets",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "AI difficulty levels (Easy/Medium/Hard/Extreme) scaling by reaction time and accuracy",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "AI bot dynamically switches weapons based on distance and difficulty",
+      "summary": "Progressive levels with escalating difficulty and combined win conditions (survive, destroy, score, protect objective)",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "3d",
-  "projectName": "1v1 LOL",
+  "gameProjectType": "2d",
+  "projectName": "F-19 Flight Simulator",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

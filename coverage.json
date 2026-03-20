@@ -1,79 +1,79 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T16:32:58.148Z",
+  "generatedAt": "2026-02-27T22:22:42.639Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 6,
-    "implemented": 6,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create a new React Three Fiber / Three.js game hook `use1v1Lol3DGame.ts` that implements a 3D first-person/third-person 1v1 battle game. The hook must manage: player state (position, HP, current weapon, ammo), AI bot state (position, HP, current weapon, ammo, difficulty), projectile physics, and collision detection in a 3D arena.",
+        "summary": "Add a step-by-step Tutorial Mode to the F-19 Flight Simulator that walks players through each core mechanic in sequence: basic movement (W/A/S/D or equivalent), throttle control, shooting enemies, locking on with targeting, dodging incoming missiles, and deploying flares as countermeasures. Each step should display a clear on-screen prompt/overlay describing the action required and only advance to the next step once the player successfully performs it.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/use1v1Lol3DGame.ts"
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/components/F19TutorialOverlay.tsx",
+          "frontend/src/pages/F19FlightSimulatorGame.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/use1v1Lol3DGame.ts"
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/components/F19TutorialOverlay.tsx",
+          "frontend/src/pages/F19FlightSimulatorGame.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Implement four weapons in the game hook, switchable via number keys 1–4: Sniper (1 bullet, slow reload ~2.5s, high damage ~80), Shotgun (5 shots, medium reload ~1.5s, spread pattern, medium damage ~15 per pellet × 6 pellets), Pistol (20 shots, fast reload ~0.8s, medium damage ~25), Machine Gun (25 bullets, medium reload ~1.2s, rapid fire, lower damage ~12 per bullet). Each weapon tracks current ammo and reload state.",
+        "summary": "Implement four new enemy types in the F-19 Flight Simulator, each with distinct behavior and visual appearance: (1) Fast Jets — high-speed aircraft that are difficult to track and require lead-aiming; (2) Armored Enemies — enemies that require multiple hits to destroy, with a visible health bar showing remaining HP; (3) Missile-Launching Drones — enemies that fire homing missiles at the player, requiring flare countermeasures to evade; (4) Ground-to-Air Turrets — static ground-based enemies that fire rapid projectiles at low-altitude aircraft. Each type should have a distinct 3D geometry/appearance and award different coin/score values on destruction.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/use1v1Lol3DGame.ts"
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/components/F19EnemyTargets.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/use1v1Lol3DGame.ts"
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/components/F19EnemyTargets.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) that scale by reaction time and accuracy. Easy: 1500ms reaction delay, 40% accuracy. Medium: 800ms reaction, 60% accuracy. Hard: 350ms reaction, 80% accuracy. Extreme: 80ms reaction, 95% accuracy. The AI bot dynamically switches weapons based on distance to player (Sniper at long range, Shotgun at close range, Pistol/Machine Gun at medium range) with weapon switching thresholds scaled by difficulty. Player selects difficulty on a pre-game screen.",
+        "summary": "Add a Progressive Levels system to the F-19 Flight Simulator with at least 6 levels of escalating difficulty. Each level should combine multiple win conditions chosen from: survive for X seconds, destroy X enemies, reach a score threshold, and protect an objective (e.g., a carrier or ground base). Difficulty should escalate across levels by increasing enemy count, enemy speed, missile frequency, and introducing new enemy types from REQ-2 at later levels. Each level should display its objectives clearly at the start and track progress in the HUD during play. A level-complete screen should show results and allow progression to the next level.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/use1v1Lol3DGame.ts"
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/components/F19LevelStartOverlay.tsx",
+          "frontend/src/components/F19LevelCompleteOverlay.tsx",
+          "frontend/src/components/F19LevelFailedOverlay.tsx",
+          "frontend/src/components/F19HUD.tsx",
+          "frontend/src/pages/F19FlightSimulatorGame.tsx",
+          "frontend/src/components/F19AircraftCarrier.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/use1v1Lol3DGame.ts"
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/components/F19LevelStartOverlay.tsx",
+          "frontend/src/components/F19LevelCompleteOverlay.tsx",
+          "frontend/src/components/F19LevelFailedOverlay.tsx",
+          "frontend/src/components/F19HUD.tsx",
+          "frontend/src/pages/F19FlightSimulatorGame.tsx",
+          "frontend/src/components/F19AircraftCarrier.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Build a 3D arena scene in the page component `OneLolGame.tsx` using React Three Fiber. The arena should include a flat ground plane, perimeter walls, and several cover obstacles (boxes/pillars) scattered around. Use pointer-lock controls or orbit-style WASD movement so the player can navigate the arena in 3D. Render the AI bot as a visible 3D mesh that moves around the arena. Display projectile meshes (small spheres or cylinders) that travel through the scene.",
+        "summary": "Add a Level Select / Mode Select screen to the F-19 Flight Simulator that lets players choose between Tutorial Mode (REQ-1) and Progressive Levels (REQ-3). The screen should show each level's name, difficulty rating, and locked/unlocked status. Completed levels should display the player's best score.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/OneLolGame.tsx"
+          "frontend/src/components/F19ModeSelect.tsx",
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/pages/F19FlightSimulatorGame.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/OneLolGame.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Add an in-game HUD overlaid on the 3D canvas showing: player HP bar, AI bot HP bar, current weapon name and ammo (e.g. 'Pistol 18/20'), reload progress bar when reloading, selected difficulty label, and a crosshair in the center of the screen.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/OneLolGame.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/OneLolGame.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Show a game-over screen when either the player or AI bot reaches 0 HP. Display who won, the match result, and a 'Play Again' button that resets the game (returning to difficulty selection). Integrate score submission using the existing ScoreSubmission component when the player wins.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/OneLolGame.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/OneLolGame.tsx"
+          "frontend/src/components/F19ModeSelect.tsx",
+          "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "frontend/src/pages/F19FlightSimulatorGame.tsx"
         ]
       }
     ]
@@ -83,8 +83,19 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/hooks/use1v1Lol3DGame.ts",
-    "frontend/src/pages/OneLolGame.tsx",
+    "frontend/src/components/F19AircraftCarrier.tsx",
+    "frontend/src/components/F19CoinShop.tsx",
+    "frontend/src/components/F19EnemyTargets.tsx",
+    "frontend/src/components/F19Flares.tsx",
+    "frontend/src/components/F19HUD.tsx",
+    "frontend/src/components/F19LevelCompleteOverlay.tsx",
+    "frontend/src/components/F19LevelFailedOverlay.tsx",
+    "frontend/src/components/F19LevelStartOverlay.tsx",
+    "frontend/src/components/F19Missiles.tsx",
+    "frontend/src/components/F19ModeSelect.tsx",
+    "frontend/src/components/F19TutorialOverlay.tsx",
+    "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+    "frontend/src/pages/F19FlightSimulatorGame.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

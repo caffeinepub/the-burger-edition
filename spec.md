@@ -1,15 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add a 3D first-person 1v1 FPS battle game to the Arcade Hub with four weapons, four AI difficulty levels, and a full in-game HUD.
+**Goal:** Add Tutorial Mode, four new enemy types, a progressive 6-level system, and a Level/Mode Select screen to the F-19 Flight Simulator.
 
 **Planned changes:**
-- Create `use1v1Lol3DGame.ts` hook managing player state, AI bot state, projectile physics, collision detection, and a requestAnimationFrame game loop
-- Implement four weapons (Sniper, Shotgun, Pistol, Machine Gun) switchable via keys 1–4, each with unique ammo capacity, reload time, and damage values
-- Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) with scaled reaction time and accuracy; AI dynamically switches weapons based on distance to player
-- Build `OneLolGame.tsx` page using React Three Fiber with a 3D arena (ground, perimeter walls, 6+ cover obstacles), WASD + mouse pointer-lock controls, a visible AI bot mesh, and visible projectile meshes
-- Add an in-game HUD overlay showing player HP bar, bot HP bar, current weapon + ammo, reload progress bar, crosshair, and difficulty label
-- Add a difficulty selection screen before the match starts
-- Add a game-over screen showing win/loss result, a "Play Again" button returning to difficulty selection, and score submission + leaderboard on win (reusing existing components)
+- Add a step-by-step Tutorial Mode accessible from the main menu that walks players through movement, throttle, shooting, lock-on targeting, missile dodging, and flare deployment; each step advances only after the player successfully performs the required action, with a progress indicator and a skip option
+- Implement four new enemy types with distinct 3D geometry, behaviors, and coin/score values: Fast Jets (high-speed, hard to track), Armored Enemies (multi-hit with visible health bar), Missile-Launching Drones (fire homing missiles countered by flares), and Ground-to-Air Turrets (static, fire upward at low-altitude players)
+- Add a Progressive Levels system with at least 6 levels of escalating difficulty; each level combines at least 2 win conditions (survive X seconds, destroy X enemies, reach a score threshold, protect an objective); objectives are shown at level start and tracked live in the HUD; a level-complete screen and a level-fail screen with retry are included; levels unlock sequentially and progress is persisted to localStorage
+- Add a Mode/Level Select screen shown on game start, offering Tutorial Mode, Progressive Levels (with name, difficulty, locked/unlocked status, and best score for completed levels), and a Freeplay option
 
-**User-visible outcome:** Players can select a difficulty, enter a 3D arena, move and aim with mouse/keyboard, switch between four weapons, and battle an AI opponent until one side reaches 0 HP, then view results and submit their score.
+**User-visible outcome:** Players can choose between Tutorial, Progressive Levels, and Freeplay from a new select screen; encounter four new enemy types across six escalating levels with combined objectives, level-complete/fail screens, and persistent unlock progress.

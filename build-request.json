@@ -1,131 +1,121 @@
 {
   "kind": "build_request",
-  "title": "3D 1v1 FPS Battle Game with Weapons and AI Difficulty",
-  "projectName": "Arcade Hub 1v1",
+  "title": "Phase 3: Tutorial Mode, New Enemy Types, and Progressive Levels",
+  "projectName": "F-19 Flight Simulator",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a new React Three Fiber / Three.js game hook `use1v1Lol3DGame.ts` that implements a 3D first-person/third-person 1v1 battle game. The hook must manage: player state (position, HP, current weapon, ammo), AI bot state (position, HP, current weapon, ammo, difficulty), projectile physics, and collision detection in a 3D arena.",
-      "target": "frontend",
+      "text": "Add a step-by-step Tutorial Mode to the F-19 Flight Simulator that walks players through each core mechanic in sequence: basic movement (W/A/S/D or equivalent), throttle control, shooting enemies, locking on with targeting, dodging incoming missiles, and deploying flares as countermeasures. Each step should display a clear on-screen prompt/overlay describing the action required and only advance to the next step once the player successfully performs it.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-5",
-          "msg-6"
+          "msg-recent-4",
+          "msg-recent-5"
+        ],
+        "quotes": [
+          "tutorial with guided instructions",
+          "mechanic step-by-step",
+          "Step-by-step guided walkthrough covering all mechanics: movement, shooting, dodging missiles, deploying flares"
         ]
       },
       "acceptanceCriteria": [
-        "Hook exports game state (player, bot, projectiles, gamePhase, score) and action handlers",
-        "Player and bot each have HP that decreases when hit by projectiles",
-        "Game phase transitions: idle → playing → game-over",
-        "All state updates occur inside a requestAnimationFrame game loop"
+        "Tutorial mode is accessible from the main menu or game start screen",
+        "Steps cover: movement, throttle, shooting, lock-on targeting, missile dodge, and flare deployment",
+        "Each step shows a clear on-screen instruction prompt",
+        "The tutorial only advances to the next step after the player successfully performs the required action",
+        "A progress indicator shows which tutorial step the player is on",
+        "Tutorial can be exited/skipped at any point",
+        "Completing the tutorial transitions the player to the first progressive level"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Implement four weapons in the game hook, switchable via number keys 1–4: Sniper (1 bullet, slow reload ~2.5s, high damage ~80), Shotgun (5 shots, medium reload ~1.5s, spread pattern, medium damage ~15 per pellet × 6 pellets), Pistol (20 shots, fast reload ~0.8s, medium damage ~25), Machine Gun (25 bullets, medium reload ~1.2s, rapid fire, lower damage ~12 per bullet). Each weapon tracks current ammo and reload state.",
-      "target": "frontend",
+      "text": "Implement four new enemy types in the F-19 Flight Simulator, each with distinct behavior and visual appearance: (1) Fast Jets — high-speed aircraft that are difficult to track and require lead-aiming; (2) Armored Enemies — enemies that require multiple hits to destroy, with a visible health bar showing remaining HP; (3) Missile-Launching Drones — enemies that fire homing missiles at the player, requiring flare countermeasures to evade; (4) Ground-to-Air Turrets — static ground-based enemies that fire rapid projectiles at low-altitude aircraft. Each type should have a distinct 3D geometry/appearance and award different coin/score values on destruction.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-5",
-          "msg-6"
+          "msg-recent-4",
+          "msg-recent-5"
+        ],
+        "quotes": [
+          "varied set that fits the game",
+          "Fast jets (quick, hard to track), Armored enemies (require multiple hits), Missile-launching drones (adds flare-counter gameplay), Ground-to-air turrets (static but deadly)"
         ]
       },
       "acceptanceCriteria": [
-        "Pressing keys 1, 2, 3, 4 switches to Sniper, Shotgun, Pistol, Machine Gun respectively",
-        "Each weapon has correct ammo capacity and reload timer",
-        "Firing is blocked when ammo is 0 and weapon is reloading",
-        "Shotgun fires multiple pellets in a spread pattern",
-        "HUD displays current weapon name, ammo count, and reload progress"
+        "Fast Jets spawn and move at significantly higher speed than standard enemies and are visually distinct",
+        "Armored enemies display a health bar and require at least 3 hits to destroy",
+        "Missile-launching drones fire homing missiles that can be countered by deploying flares",
+        "Ground-to-air turrets are placed on terrain and fire projectiles upward at the player when within range",
+        "Each enemy type has a unique 3D model/geometry distinguishable from others",
+        "Each enemy type awards a different coin and score value on destruction",
+        "All new enemy types integrate with the existing targeting/lock-on system in useF19FlightSimulatorGame.ts"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) that scale by reaction time and accuracy. Easy: 1500ms reaction delay, 40% accuracy. Medium: 800ms reaction, 60% accuracy. Hard: 350ms reaction, 80% accuracy. Extreme: 80ms reaction, 95% accuracy. The AI bot dynamically switches weapons based on distance to player (Sniper at long range, Shotgun at close range, Pistol/Machine Gun at medium range) with weapon switching thresholds scaled by difficulty. Player selects difficulty on a pre-game screen.",
-      "target": "frontend",
+      "text": "Add a Progressive Levels system to the F-19 Flight Simulator with at least 6 levels of escalating difficulty. Each level should combine multiple win conditions chosen from: survive for X seconds, destroy X enemies, reach a score threshold, and protect an objective (e.g., a carrier or ground base). Difficulty should escalate across levels by increasing enemy count, enemy speed, missile frequency, and introducing new enemy types from REQ-2 at later levels. Each level should display its objectives clearly at the start and track progress in the HUD during play. A level-complete screen should show results and allow progression to the next level.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-5",
-          "msg-6"
+          "msg-recent-4",
+          "msg-recent-5"
+        ],
+        "quotes": [
+          "levels can combine multiple conditions at once",
+          "Escalating difficulty: more enemies, faster missiles, tighter time limits",
+          "Combined win conditions per level (e.g., survive 60s AND destroy 10 enemies AND reach 500 points)",
+          "A protect-the-objective mission type mixed in"
         ]
       },
       "acceptanceCriteria": [
-        "Difficulty selection screen appears before the game starts with Easy/Medium/Hard/Extreme options",
-        "AI reaction time matches the specified delay per difficulty",
-        "AI aim accuracy scales with difficulty (higher difficulty = tighter shot spread)",
-        "AI switches to Sniper when player is far, Shotgun when close, Pistol/MachineGun at medium range",
-        "AI reloads weapons when empty just like the player"
+        "At least 6 progressive levels are defined with increasing difficulty parameters",
+        "Each level specifies a combination of at least 2 win conditions from: survive X seconds, destroy X enemies, reach score threshold, protect objective",
+        "Level objectives are displayed in an overlay at the start of each level",
+        "HUD shows live progress toward all active objectives during gameplay",
+        "Enemies become more numerous, faster, and include new enemy types in higher levels",
+        "A protect-the-objective mechanic exists where a target (e.g., carrier) has HP and the level fails if it is destroyed",
+        "A level-complete screen shows score, coins earned, and objectives met, with a button to proceed to the next level",
+        "A level-fail screen appears when the player crashes or fails to meet a time-limited objective, with a retry button",
+        "Levels are unlocked sequentially; completing a level unlocks the next"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Build a 3D arena scene in the page component `OneLolGame.tsx` using React Three Fiber. The arena should include a flat ground plane, perimeter walls, and several cover obstacles (boxes/pillars) scattered around. Use pointer-lock controls or orbit-style WASD movement so the player can navigate the arena in 3D. Render the AI bot as a visible 3D mesh that moves around the arena. Display projectile meshes (small spheres or cylinders) that travel through the scene.",
+      "text": "Add a Level Select / Mode Select screen to the F-19 Flight Simulator that lets players choose between Tutorial Mode (REQ-1) and Progressive Levels (REQ-3). The screen should show each level's name, difficulty rating, and locked/unlocked status. Completed levels should display the player's best score.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5",
-          "msg-6"
+          "msg-recent-5"
+        ],
+        "quotes": [
+          "Tutorial Mode",
+          "Progressive Levels"
         ]
       },
       "acceptanceCriteria": [
-        "Arena renders in 3D with ground, walls, and at least 6 cover obstacles",
-        "Player can move with WASD and look with mouse (pointer lock)",
-        "AI bot is represented by a 3D mesh (e.g., box or capsule) that moves toward/away from player",
-        "Projectiles are visible as small 3D meshes traveling from shooter to target",
-        "Game renders at 60fps with no major visual glitches"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Add an in-game HUD overlaid on the 3D canvas showing: player HP bar, AI bot HP bar, current weapon name and ammo (e.g. 'Pistol 18/20'), reload progress bar when reloading, selected difficulty label, and a crosshair in the center of the screen.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-5"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Player HP bar and AI HP bar are both visible during gameplay",
-        "Weapon name and ammo count update immediately on switching or firing",
-        "Reload progress bar appears and fills during reload, disappears when complete",
-        "Crosshair is centered on screen at all times during gameplay",
-        "Difficulty label is visible during the match"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Show a game-over screen when either the player or AI bot reaches 0 HP. Display who won, the match result, and a 'Play Again' button that resets the game (returning to difficulty selection). Integrate score submission using the existing ScoreSubmission component when the player wins.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-6"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Game-over screen appears immediately when HP reaches 0",
-        "Screen clearly states 'You Win' or 'You Lose'",
-        "'Play Again' button returns to the difficulty selection screen and resets all state",
-        "Score submission form appears on win screen",
-        "Leaderboard is shown below score submission on win"
+        "A mode/level select screen is shown when starting the F-19 game instead of going directly into freeplay",
+        "Tutorial Mode option is always unlocked and accessible",
+        "Progressive levels are listed with name, difficulty indicator, and locked/unlocked status",
+        "Locked levels show a lock icon; unlocked levels are clickable",
+        "Completed levels display the player's best score beneath their entry",
+        "A 'Freeplay' option to play the existing sandbox mode is also available"
       ]
     }
   ],
   "constraints": [
-    "All game logic must remain in frontend hooks and page components — no backend changes required",
-    "Do not modify files listed in frontend.immutablePaths",
-    "Reuse existing ScoreSubmission and Leaderboard components from frontend/src/components/",
-    "The route and nav link for the 1v1 lol game already exists in App.tsx and Layout.tsx — do not duplicate it"
+    "All new game logic must be added to or extend the existing useF19FlightSimulatorGame.ts hook and F19FlightSimulatorGame.tsx page — do not create a separate game hook",
+    "New enemy types must integrate with the existing targeting, missile, and flare systems in F19EnemyTargets.tsx and F19Missiles.tsx",
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "All level progress and unlock state must be persisted to localStorage"
   ],
   "nonGoals": [
-    "Multiplayer / networked play — AI opponent only",
-    "Building/construction mechanics from the original 1v1.lol",
-    "Mobile touch controls for the 3D game",
-    "Backend persistence of match results"
+    "Multiplayer or co-op modes",
+    "Backend leaderboard for level scores (localStorage only for now)",
+    "New aircraft models or player aircraft changes",
+    "Changes to the coin shop pricing or existing purchasable items",
+    "Changes to existing freeplay/sandbox game mechanics"
   ],
   "imageRequirements": {
     "required": [],

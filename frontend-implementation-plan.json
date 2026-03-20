@@ -1,112 +1,141 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "3D 1v1 FPS Battle Game with Weapons and AI Difficulty",
+  "title": "Phase 3: Tutorial Mode, New Enemy Types, and Progressive Levels",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Create a new React Three Fiber / Three.js game hook `use1v1Lol3DGame.ts` that implements a 3D first-person/third-person 1v1 battle game with player state, AI bot state, projectile physics, and collision detection in a 3D arena",
+      "summary": "Add a step-by-step Tutorial Mode with on-screen prompts guiding players through movement, throttle, shooting, lock-on, dodging missiles, and deploying flares, advancing only after successful completion of each step",
       "acceptanceCriteria": [
-        "Hook exports game state (player, bot, projectiles, gamePhase, score) and action handlers",
-        "Player and bot each have HP that decreases when hit by projectiles",
-        "Game phase transitions: idle → playing → game-over",
-        "All state updates occur inside a requestAnimationFrame game loop"
+        "Tutorial mode is accessible from the main menu or game start screen",
+        "Steps cover: movement, throttle, shooting, lock-on targeting, missile dodge, and flare deployment",
+        "Each step shows a clear on-screen instruction prompt",
+        "The tutorial only advances to the next step after the player successfully performs the required action",
+        "A progress indicator shows which tutorial step the player is on",
+        "Tutorial can be exited/skipped at any point",
+        "Completing the tutorial transitions the player to the first progressive level"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/use1v1Lol3DGame.ts",
+          "path": "frontend/src/hooks/useF19FlightSimulatorGame.ts",
+          "operation": "modify",
+          "description": "Add tutorial mode state management including tutorialStep, tutorialActive, tutorialCompleted flags and step validation logic. Track player actions (movement, throttle changes, shooting, lock-on, missile dodge, flare deployment) to detect successful completion of each tutorial step and auto-advance to the next. Add a tutorialStepData array defining each step's prompt text, completion condition, and target mechanic. Persist tutorialCompleted flag to localStorage."
+        },
+        {
+          "path": "frontend/src/components/F19TutorialOverlay.tsx",
           "operation": "create",
-          "description": "Create a new React hook that manages 3D game state for a 1v1 FPS battle. The hook must export game state (player position/HP/weapon/ammo, bot position/HP/weapon/ammo/difficulty, projectiles array, gamePhase enum, score object) and action handlers (startGame, fire, switchWeapon, movePlayer, selectDifficulty, reset). Implement a ref-based requestAnimationFrame game loop that updates projectile positions, checks 3D collision detection between projectiles and player/bot, decrements HP on hits, and transitions gamePhase from idle → playing → game-over. Player and bot each start with 100 HP. Track all state in refs for performance and expose read-only state via useState for React rendering."
+          "description": "Create a tutorial overlay component that displays the current step's instruction prompt, a progress indicator (e.g., 'Step 2 of 7'), and skip/exit buttons. Position the overlay at the top-center of the screen with semi-transparent backdrop. Accept props for tutorialStep, totalSteps, stepPrompt, onSkip, and onExit. Style consistently with existing F19HUD component using neon arcade theming."
+        },
+        {
+          "path": "frontend/src/pages/F19FlightSimulatorGame.tsx",
+          "operation": "modify",
+          "description": "Wire the F19TutorialOverlay component into the game page, rendering it conditionally when tutorialActive is true from useF19FlightSimulatorGame. Pass current tutorial step data and handlers for skip/exit actions. Ensure the tutorial overlay appears above the HUD but below the game-over and coin shop overlays in z-index stacking order."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Implement four weapons (Sniper, Shotgun, Pistol, Machine Gun) with distinct stats, switchable via number keys 1–4, each tracking ammo and reload state",
+      "summary": "Implement four new enemy types with distinct behaviors and visuals: Fast Jets (high-speed, hard to track), Armored Enemies (multi-hit with health bar), Missile-Launching Drones (fire homing missiles), and Ground-to-Air Turrets (static, rapid-fire)",
       "acceptanceCriteria": [
-        "Pressing keys 1, 2, 3, 4 switches to Sniper, Shotgun, Pistol, Machine Gun respectively",
-        "Each weapon has correct ammo capacity and reload timer",
-        "Firing is blocked when ammo is 0 and weapon is reloading",
-        "Shotgun fires multiple pellets in a spread pattern",
-        "HUD displays current weapon name, ammo count, and reload progress"
+        "Fast Jets spawn and move at significantly higher speed than standard enemies and are visually distinct",
+        "Armored enemies display a health bar and require at least 3 hits to destroy",
+        "Missile-launching drones fire homing missiles that can be countered by deploying flares",
+        "Ground-to-air turrets are placed on terrain and fire projectiles upward at the player when within range",
+        "Each enemy type has a unique 3D model/geometry distinguishable from others",
+        "Each enemy type awards a different coin and score value on destruction",
+        "All new enemy types integrate with the existing targeting/lock-on system in useF19FlightSimulatorGame.ts"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/use1v1Lol3DGame.ts",
+          "path": "frontend/src/hooks/useF19FlightSimulatorGame.ts",
           "operation": "modify",
-          "description": "Add weapon system with four weapon types: Sniper (1 ammo, 2.5s reload, 80 damage), Shotgun (5 ammo, 1.5s reload, 6 pellets × 15 damage each, spread pattern), Pistol (20 ammo, 0.8s reload, 25 damage), Machine Gun (25 ammo, 1.2s reload, 12 damage, rapid fire). Track currentWeapon, ammo, reloadTimer, and isReloading for both player and bot. Implement switchWeapon handler that responds to keys 1–4. Block firing when ammo is 0 or isReloading is true. For Shotgun, generate 6 projectiles with randomized spread angles. Automatically trigger reload when ammo reaches 0. Expose weapon state in the hook's return value."
+          "description": "Extend the enemy type system to support four new enemy variants: 'fastJet', 'armoredEnemy', 'missileDrone', and 'groundTurret'. Add enemy type-specific properties including speed multipliers, health values, missile-firing capability flags, and coin/score reward values. Implement logic for armored enemies to track current HP and only destroy when HP reaches zero. Add missile-launching behavior for drones that spawn homing missiles targeting the player at intervals. Add ground turret logic for static position enemies that fire rapid projectiles when player is in range and at low altitude. Ensure all new enemy types work with existing lock-on and targeting systems."
+        },
+        {
+          "path": "frontend/src/components/F19EnemyTargets.tsx",
+          "operation": "modify",
+          "description": "Add distinct 3D geometries for each new enemy type: Fast Jets (sleek elongated cone with swept wings), Armored Enemies (bulky box-based geometry with additional plating), Missile-Launching Drones (quad-rotor propeller design with missile pods), Ground-to-Air Turrets (cylindrical base with rotating gun barrel). Render health bars above armored enemies showing current HP out of max HP. Use different material colors/emissive properties to make each enemy type visually distinguishable at a distance."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Implement four AI difficulty levels (Easy, Medium, Hard, Extreme) that scale by reaction time and accuracy, with dynamic weapon switching based on distance to player and a pre-game difficulty selection screen",
+      "summary": "Add a Progressive Levels system with at least 6 levels of escalating difficulty, each combining multiple win conditions (survive time, destroy enemies, score threshold, protect objective) with increasing enemy count, speed, missile frequency, and new enemy types",
       "acceptanceCriteria": [
-        "Difficulty selection screen appears before the game starts with Easy/Medium/Hard/Extreme options",
-        "AI reaction time matches the specified delay per difficulty",
-        "AI aim accuracy scales with difficulty (higher difficulty = tighter shot spread)",
-        "AI switches to Sniper when player is far, Shotgun when close, Pistol/MachineGun at medium range",
-        "AI reloads weapons when empty just like the player"
+        "At least 6 progressive levels are defined with increasing difficulty parameters",
+        "Each level specifies a combination of at least 2 win conditions from: survive X seconds, destroy X enemies, reach score threshold, protect objective",
+        "Level objectives are displayed in an overlay at the start of each level",
+        "HUD shows live progress toward all active objectives during gameplay",
+        "Enemies become more numerous, faster, and include new enemy types in higher levels",
+        "A protect-the-objective mechanic exists where a target (e.g., carrier) has HP and the level fails if it is destroyed",
+        "A level-complete screen shows score, coins earned, and objectives met, with a button to proceed to the next level",
+        "A level-fail screen appears when the player crashes or fails to meet a time-limited objective, with a retry button",
+        "Levels are unlocked sequentially; completing a level unlocks the next"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/use1v1Lol3DGame.ts",
+          "path": "frontend/src/hooks/useF19FlightSimulatorGame.ts",
           "operation": "modify",
-          "description": "Add AI difficulty system with four levels: Easy (1500ms reaction, 40% accuracy), Medium (800ms reaction, 60% accuracy), Hard (350ms reaction, 80% accuracy), Extreme (80ms reaction, 95% accuracy). Store selectedDifficulty in state and expose selectDifficulty handler. In the game loop, implement AI logic that calculates distance to player and switches weapons (Sniper if distance > 30 units, Shotgun if distance < 10 units, Pistol/MachineGun otherwise, with thresholds scaled by difficulty). Apply reaction delay before AI fires. Add random aim offset inversely proportional to accuracy percentage. Ensure AI reloads when ammo is 0. Start gamePhase in 'idle' to allow difficulty selection before transitioning to 'playing'."
+          "description": "Add progressive levels state management with a levelDefinitions array containing at least 6 levels, each specifying: level name, difficulty rating, combined win conditions (survive time, destroy enemy count, score threshold, protect objective HP), enemy spawn parameters (count, types, speed multipliers, missile frequency). Track currentLevel, levelProgress for each objective type, objectiveHP for protect missions, and levelUnlocked status array in localStorage. Implement logic to check all active win conditions each frame and trigger level completion or failure. Add levelComplete and levelFailed flags to control overlay display. Increment level unlock status on successful completion."
+        },
+        {
+          "path": "frontend/src/components/F19LevelStartOverlay.tsx",
+          "operation": "create",
+          "description": "Create a level start overlay component that displays the current level's name, difficulty rating, and all active objectives with their target values (e.g., 'Survive 90 seconds', 'Destroy 15 enemies', 'Protect the carrier'). Include a 'Start Level' button to begin gameplay. Style with neon arcade theming consistent with F19HUD and tutorial overlay."
+        },
+        {
+          "path": "frontend/src/components/F19LevelCompleteOverlay.tsx",
+          "operation": "create",
+          "description": "Create a level complete overlay showing 'Mission Complete' title, final score, coins earned this level, checkmarks for each completed objective, and a 'Next Level' button. Style with success-themed neon green accents and arcade font styling."
+        },
+        {
+          "path": "frontend/src/components/F19LevelFailedOverlay.tsx",
+          "operation": "create",
+          "description": "Create a level failed overlay showing 'Mission Failed' title, reason for failure (crashed, time expired, objective destroyed), and a 'Retry Level' button. Style with failure-themed neon red accents and arcade font styling."
+        },
+        {
+          "path": "frontend/src/components/F19HUD.tsx",
+          "operation": "modify",
+          "description": "Add an objectives progress panel to the HUD displaying live progress toward each active level objective: timer countdown for survive missions, enemy kill count vs target, current score vs threshold, and objective HP bar for protect missions. Position the objectives panel at the top-right of the HUD. Only display when in progressive levels mode (not freeplay or tutorial)."
+        },
+        {
+          "path": "frontend/src/pages/F19FlightSimulatorGame.tsx",
+          "operation": "modify",
+          "description": "Wire the F19LevelStartOverlay, F19LevelCompleteOverlay, and F19LevelFailedOverlay components into the game page, rendering each conditionally based on level state flags from useF19FlightSimulatorGame. Handle transitions between overlays and gameplay states. Ensure level overlays have higher z-index than HUD but coexist with tutorial and shop overlays appropriately."
+        },
+        {
+          "path": "frontend/src/components/F19AircraftCarrier.tsx",
+          "operation": "modify",
+          "description": "Add a health bar rendering above the aircraft carrier when in protect-objective mode, showing current HP out of max HP. Position the health bar above the island superstructure. Use neon styling consistent with enemy health bars."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Build a 3D arena scene in `OneLolGame.tsx` using React Three Fiber with ground, walls, cover obstacles, pointer-lock WASD movement, visible AI bot mesh, and projectile rendering",
+      "summary": "Add a Level Select / Mode Select screen showing Tutorial Mode, Progressive Levels (with lock/unlock status and best scores), and Freeplay option before starting gameplay",
       "acceptanceCriteria": [
-        "Arena renders in 3D with ground, walls, and at least 6 cover obstacles",
-        "Player can move with WASD and look with mouse (pointer lock)",
-        "AI bot is represented by a 3D mesh (e.g., box or capsule) that moves toward/away from player",
-        "Projectiles are visible as small 3D meshes traveling from shooter to target",
-        "Game renders at 60fps with no major visual glitches"
+        "A mode/level select screen is shown when starting the F-19 game instead of going directly into freeplay",
+        "Tutorial Mode option is always unlocked and accessible",
+        "Progressive levels are listed with name, difficulty indicator, and locked/unlocked status",
+        "Locked levels show a lock icon; unlocked levels are clickable",
+        "Completed levels display the player's best score beneath their entry",
+        "A 'Freeplay' option to play the existing sandbox mode is also available"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/OneLolGame.tsx",
-          "operation": "modify",
-          "description": "Replace the existing 2D canvas-based 1v1 game with a 3D React Three Fiber implementation. Import Canvas from @react-three/fiber and PointerLockControls from @react-three/drei. Replace the use1v1LolGame hook with use1v1Lol3DGame. Render a <Canvas> element with a 3D arena: a flat ground plane (BoxGeometry scaled wide and thin), perimeter walls (4 tall BoxGeometry boxes forming a square boundary), and at least 6 cover obstacles (BoxGeometry boxes or cylinders positioned around the arena). Add <PointerLockControls> and implement WASD movement in a useFrame hook that updates player position in the game hook. Render the AI bot as a colored BoxGeometry or CapsuleGeometry mesh at bot.position. Map projectiles array to small SphereGeometry or CylinderGeometry meshes positioned at each projectile's 3D coordinates. Add ambient and directional lights. Remove all canvas-based rendering code."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Add an in-game HUD overlaid on the 3D canvas showing player HP, AI HP, current weapon/ammo, reload progress, difficulty label, and a centered crosshair",
-      "acceptanceCriteria": [
-        "Player HP bar and AI HP bar are both visible during gameplay",
-        "Weapon name and ammo count update immediately on switching or firing",
-        "Reload progress bar appears and fills during reload, disappears when complete",
-        "Crosshair is centered on screen at all times during gameplay",
-        "Difficulty label is visible during the match"
-      ],
-      "file_operations": [
+          "path": "frontend/src/components/F19ModeSelect.tsx",
+          "operation": "create",
+          "description": "Create a mode/level select screen component with three sections: Tutorial Mode (always unlocked with a 'Start Tutorial' button), Progressive Levels (a scrollable grid of level cards showing level name, difficulty stars, lock icon for locked levels, best score for completed levels, and click handler for unlocked levels), and Freeplay Mode (a card with 'Play Freeplay' button). Accept props for levelUnlockStatus array, levelBestScores map, onSelectTutorial, onSelectLevel, and onSelectFreeplay handlers. Style with neon arcade theming and use layout similar to the GameLobby grid."
+        },
         {
-          "path": "frontend/src/pages/OneLolGame.tsx",
+          "path": "frontend/src/hooks/useF19FlightSimulatorGame.ts",
           "operation": "modify",
-          "description": "Add a HUD overlay positioned absolutely over the 3D Canvas. Include: a player HP bar (top-left, styled with neon green), an AI HP bar (top-right, styled with neon red), a weapon/ammo display (bottom-center, showing currentWeapon name and ammo count like 'Pistol 18/20'), a reload progress bar (below weapon display, visible only when isReloading is true, filling based on reloadTimer progress), a difficulty label (top-center, showing selectedDifficulty), and a crosshair (fixed center of screen, small cross or dot). Use Tailwind classes for positioning and neon arcade styling. Ensure HUD elements do not interfere with pointer-lock controls."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Show a game-over screen when either player or AI reaches 0 HP, displaying winner, match result, and a 'Play Again' button that resets to difficulty selection; integrate ScoreSubmission on player win",
-      "acceptanceCriteria": [
-        "Game-over screen appears immediately when HP reaches 0",
-        "Screen clearly states 'You Win' or 'You Lose'",
-        "'Play Again' button returns to the difficulty selection screen and resets all state",
-        "Score submission form appears on win screen",
-        "Leaderboard is shown below score submission on win"
-      ],
-      "file_operations": [
+          "description": "Add modeSelectActive state flag that starts as true and is set to false when a mode is selected. Add selectedMode ('tutorial', 'level', 'freeplay') and selectedLevelIndex state. Load levelUnlockStatus and levelBestScores from localStorage on initialization. Export handlers for mode selection that update state and hide the mode select screen."
+        },
         {
-          "path": "frontend/src/pages/OneLolGame.tsx",
+          "path": "frontend/src/pages/F19FlightSimulatorGame.tsx",
           "operation": "modify",
-          "description": "Add conditional rendering for gamePhase. When gamePhase is 'game-over', hide the Canvas and HUD, and show a game-over overlay. Display 'You Win!' if player HP > 0 and bot HP is 0, or 'You Lose!' if bot HP > 0 and player HP is 0. Show the final score. If player won, render the existing ScoreSubmission component (pass score as prop) and Leaderboard component below it (use gameName='1v1-lol-3d', preferHigher=true). Include a 'Play Again' button that calls the reset handler from use1v1Lol3DGame, which should reset gamePhase to 'idle' (returning to difficulty selection), reset HP, ammo, and all game state. Ensure difficulty selection screen is shown when gamePhase is 'idle'."
+          "description": "Wire the F19ModeSelect component to render when modeSelectActive is true from useF19FlightSimulatorGame, displaying it as a full-screen overlay that hides the 3D canvas and HUD until a mode is selected. Pass level unlock status, best scores, and mode selection handlers. Ensure the Canvas and game UI only render when modeSelectActive is false."
         }
       ]
     }

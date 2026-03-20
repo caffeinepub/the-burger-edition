@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, Crosshair } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PointerLockControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -8,10 +8,13 @@ import {
   use1v1Lol3DGame,
   WEAPONS,
   DIFFICULTY_CONFIGS,
+  STRUCTURE_DIMS,
   type Difficulty,
   type WeaponType,
   type Projectile,
   type CombatantState,
+  type PlacedStructure,
+  type StructureType,
 } from '../hooks/use1v1Lol3DGame';
 import ScoreSubmission from '../components/ScoreSubmission';
 import Leaderboard from '../components/Leaderboard';
@@ -31,6 +34,13 @@ const OBSTACLES = [
   { pos: [-5, 1, -15] as [number, number, number], size: [3, 2, 1] as [number, number, number], color: '#334455' },
   { pos: [0, 1, 0] as [number, number, number], size: [2, 2, 2] as [number, number, number], color: '#445544' },
 ];
+
+// ─── Structure colors ─────────────────────────────────────────────────────────
+const STRUCTURE_COLORS: Record<StructureType, string> = {
+  wall: '#4488cc',
+  floor: '#44aa66',
+  ramp: '#cc8844',
+};
 
 // ─── Arena scene ─────────────────────────────────────────────────────────────
 function Arena() {
@@ -84,6 +94,66 @@ function Arena() {
   );
 }
 
+// ─── Placed structures ────────────────────────────────────────────────────────
+function PlacedStructures({ structures }: { structures: PlacedStructure[] }) {
+  return (
+    <group>
+      {structures.map((struct) => {
+        const dims = STRUCTURE_DIMS[struct.type];
+        const color = STRUCTURE_COLORS[struct.type];
+        return (
+          <mesh
+            key={struct.id}
+            position={[struct.position.x, struct.position.y, struct.position.z]}
+            rotation={[struct.type === 'ramp' ? -Math.PI / 8 : 0, struct.rotationY, 0]}
+            castShadow
+            receiveShadow
+          >
+            <boxGeometry args={dims} />
+            <meshStandardMaterial
+              color={color}
+              emissive={color}
+              emissiveIntensity={0.15}
+              roughness={0.6}
+            />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+
+// ─── Ghost preview ────────────────────────────────────────────────────────────
+function GhostPreview({
+  ghostPosition,
+  ghostRotationY,
+  selectedStructure,
+}: {
+  ghostPosition: THREE.Vector3 | null;
+  ghostRotationY: number;
+  selectedStructure: StructureType;
+}) {
+  if (!ghostPosition) return null;
+  const dims = STRUCTURE_DIMS[selectedStructure];
+  const color = STRUCTURE_COLORS[selectedStructure];
+  return (
+    <mesh
+      position={[ghostPosition.x, ghostPosition.y, ghostPosition.z]}
+      rotation={[selectedStructure === 'ramp' ? -Math.PI / 8 : 0, ghostRotationY, 0]}
+    >
+      <boxGeometry args={dims} />
+      <meshStandardMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={0.5}
+        transparent
+        opacity={0.45}
+        wireframe={false}
+      />
+    </mesh>
+  );
+}
+
 // ─── Bot mesh ─────────────────────────────────────────────────────────────────
 function BotMesh({ bot }: { bot: CombatantState }) {
   const meshRef = useRef<THREE.Group>(null);
@@ -93,12 +163,12 @@ function BotMesh({ bot }: { bot: CombatantState }) {
   useFrame(() => {
     if (meshRef.current) {
       meshRef.current.position.copy(bot.position);
-      meshRef.current.position.y = 0;
+      meshRef.current.position.y = bot.position.y - 1.7; // offset so feet are at bot.position.y - PLAYER_HEIGHT
     }
   });
 
   return (
-    <group ref={meshRef} position={[bot.position.x, 0, bot.position.z]}>
+    <group ref={meshRef} position={[bot.position.x, bot.position.y - 1.7, bot.position.z]}>
       {/* Body */}
       <mesh position={[0, 1, 0]} castShadow>
         <boxGeometry args={[0.8, 1.2, 0.5]} />
@@ -173,10 +243,11 @@ interface PlayerControllerProps {
   cameraRef: React.MutableRefObject<THREE.Camera | null>;
   playerPos: THREE.Vector3;
   isPlaying: boolean;
+  buildMode: boolean;
   onFire: () => void;
 }
 
-function PlayerController({ keysRef, cameraRef, playerPos, isPlaying, onFire }: PlayerControllerProps) {
+function PlayerController({ keysRef, cameraRef, playerPos, isPlaying, buildMode, onFire }: PlayerControllerProps) {
   const { camera } = useThree();
   const fireIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -191,14 +262,16 @@ function PlayerController({ keysRef, cameraRef, playerPos, isPlaying, onFire }: 
     }
   });
 
-  // Auto-fire on mouse hold
+  // Auto-fire on mouse hold (only in combat mode)
   useEffect(() => {
     if (!isPlaying) return;
 
     const handleMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
         onFire();
-        fireIntervalRef.current = setInterval(onFire, 80);
+        if (!buildMode) {
+          fireIntervalRef.current = setInterval(onFire, 80);
+        }
       }
     };
     const handleMouseUp = () => {
@@ -215,7 +288,7 @@ function PlayerController({ keysRef, cameraRef, playerPos, isPlaying, onFire }: 
       window.removeEventListener('mouseup', handleMouseUp);
       if (fireIntervalRef.current) clearInterval(fireIntervalRef.current);
     };
-  }, [isPlaying, onFire]);
+  }, [isPlaying, onFire, buildMode]);
 
   return <PointerLockControls />;
 }
@@ -233,6 +306,74 @@ function Lights() {
   );
 }
 
+// ─── Build mode HUD ───────────────────────────────────────────────────────────
+const STRUCTURE_LABELS: Record<StructureType, string> = {
+  wall: 'WALL',
+  floor: 'FLOOR',
+  ramp: 'RAMP',
+};
+const STRUCTURE_KEYS: StructureType[] = ['wall', 'floor', 'ramp'];
+
+function BuildModeHUD({
+  buildMode,
+  selectedStructure,
+  onSelect,
+}: {
+  buildMode: boolean;
+  selectedStructure: StructureType;
+  onSelect: (t: StructureType) => void;
+}) {
+  if (!buildMode) return null;
+  return (
+    <div
+      className="absolute top-4 right-4 z-20 flex flex-col gap-2 items-end pointer-events-auto"
+      style={{ userSelect: 'none' }}
+    >
+      <div
+        className="font-pixel text-xs px-3 py-1 rounded"
+        style={{
+          background: 'rgba(0,200,255,0.18)',
+          border: '2px solid #00ccff',
+          color: '#00ccff',
+          textShadow: '0 0 8px #00ccff',
+          letterSpacing: '0.1em',
+        }}
+      >
+        🏗 BUILD MODE
+      </div>
+      <div className="flex flex-col gap-1">
+        {STRUCTURE_KEYS.map((type, i) => (
+          <button
+            key={type}
+            onClick={() => onSelect(type)}
+            className="font-pixel text-[10px] px-3 py-1 rounded transition-all"
+            style={{
+              background: selectedStructure === type ? STRUCTURE_COLORS_HEX[type] + '33' : 'rgba(0,0,0,0.5)',
+              border: `2px solid ${selectedStructure === type ? STRUCTURE_COLORS_HEX[type] : '#334455'}`,
+              color: selectedStructure === type ? STRUCTURE_COLORS_HEX[type] : '#667788',
+              textShadow: selectedStructure === type ? `0 0 8px ${STRUCTURE_COLORS_HEX[type]}` : 'none',
+            }}
+          >
+            [{i + 1}] {STRUCTURE_LABELS[type]}
+          </button>
+        ))}
+      </div>
+      <div
+        className="font-pixel text-[9px] px-2 py-1 rounded"
+        style={{ background: 'rgba(0,0,0,0.5)', color: '#556677', border: '1px solid #334455' }}
+      >
+        LMB — Place | F — Exit
+      </div>
+    </div>
+  );
+}
+
+const STRUCTURE_COLORS_HEX: Record<StructureType, string> = {
+  wall: '#4488cc',
+  floor: '#44aa66',
+  ramp: '#cc8844',
+};
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function OneLolGame() {
   const navigate = useNavigate();
@@ -242,6 +383,8 @@ export default function OneLolGame() {
     reset,
     switchWeapon,
     firePlayer,
+    toggleBuildMode,
+    selectStructure,
     keysRef,
     cameraRef,
   } = use1v1Lol3DGame();
@@ -249,7 +392,20 @@ export default function OneLolGame() {
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
 
-  const { phase, player, bot, projectiles, difficulty, score, playerWon } = gameState;
+  const {
+    phase,
+    player,
+    bot,
+    projectiles,
+    difficulty,
+    score,
+    playerWon,
+    buildMode,
+    selectedStructure,
+    placedStructures,
+    ghostPosition,
+    ghostRotationY,
+  } = gameState;
 
   // ─── Keyboard input ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -258,11 +414,24 @@ export default function OneLolGame() {
 
       if (phase !== 'playing') return;
 
-      // Weapon switching
-      if (e.key === '1') switchWeapon('sniper');
-      if (e.key === '2') switchWeapon('shotgun');
-      if (e.key === '3') switchWeapon('pistol');
-      if (e.key === '4') switchWeapon('machinegun');
+      // Build mode toggle
+      if (e.key === 'f' || e.key === 'F') {
+        toggleBuildMode();
+        return;
+      }
+
+      if (buildMode) {
+        // Structure selection in build mode
+        if (e.key === '1') selectStructure('wall');
+        if (e.key === '2') selectStructure('floor');
+        if (e.key === '3') selectStructure('ramp');
+      } else {
+        // Weapon switching in combat mode
+        if (e.key === '1') switchWeapon('sniper');
+        if (e.key === '2') switchWeapon('shotgun');
+        if (e.key === '3') switchWeapon('pistol');
+        if (e.key === '4') switchWeapon('machinegun');
+      }
 
       // Prevent scroll
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
@@ -279,7 +448,20 @@ export default function OneLolGame() {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
-  }, [phase, keysRef, switchWeapon]);
+  }, [phase, keysRef, switchWeapon, toggleBuildMode, selectStructure, buildMode]);
+
+  // Mouse wheel to cycle structures in build mode
+  useEffect(() => {
+    if (phase !== 'playing') return;
+    const onWheel = (e: WheelEvent) => {
+      if (!buildMode) return;
+      const idx = STRUCTURE_KEYS.indexOf(selectedStructure);
+      const next = (idx + (e.deltaY > 0 ? 1 : -1) + STRUCTURE_KEYS.length) % STRUCTURE_KEYS.length;
+      selectStructure(STRUCTURE_KEYS[next]);
+    };
+    window.addEventListener('wheel', onWheel);
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [phase, buildMode, selectedStructure, selectStructure]);
 
   // ─── Pointer lock state ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -388,10 +570,12 @@ export default function OneLolGame() {
             <div className="grid grid-cols-2 gap-2 font-pixel text-[10px] text-arcade-muted">
               <span>WASD — Move</span>
               <span>MOUSE — Look</span>
-              <span>LMB — Shoot</span>
-              <span>1-4 — Switch Weapon</span>
+              <span>LMB — Shoot / Place</span>
+              <span>SPACE — Double Jump</span>
+              <span>1-4 — Weapon / Structure</span>
+              <span>F — Toggle Build Mode</span>
+              <span>SCROLL — Cycle Structure</span>
               <span>ESC — Unlock Mouse</span>
-              <span>Click — Lock Mouse</span>
             </div>
           </div>
         </div>
@@ -464,7 +648,7 @@ export default function OneLolGame() {
                     className="h-full rounded-full transition-all"
                     style={{
                       width: `${(bot.hp / bot.maxHp) * 100}%`,
-                      background: '#ff3333',
+                      background: bot.hp > 50 ? '#00ff88' : bot.hp > 25 ? '#ffcc00' : '#ff3333',
                     }}
                   />
                 </div>
@@ -473,30 +657,37 @@ export default function OneLolGame() {
 
             {/* Score submission */}
             {playerWon && !scoreSubmitted && (
-              <div className="w-full max-w-sm">
-                <ScoreSubmission
-                  game="1v1-lol-3d"
-                  score={score}
-                  label="SAVE SCORE"
-                  scoreSuffix="pts"
-                  onSubmitted={() => setScoreSubmitted(true)}
-                />
-              </div>
+              <ScoreSubmission
+                game="1v1lol"
+                score={score}
+                onSubmitted={() => setScoreSubmitted(true)}
+              />
+            )}
+            {scoreSubmitted && (
+              <p className="font-pixel text-xs text-neon-green">✓ SCORE SAVED!</p>
             )}
 
-            {/* Play again */}
-            <button
-              onClick={handleReset}
-              className="btn-neon-cyan font-pixel text-sm px-8 py-3 rounded-lg tracking-widest"
-            >
-              ▶ PLAY AGAIN
-            </button>
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                onClick={handleReset}
+                className="neon-btn font-pixel text-xs px-6 py-3"
+              >
+                PLAY AGAIN
+              </button>
+              <button
+                onClick={() => navigate({ to: '/' })}
+                className="font-pixel text-xs px-6 py-3 border border-arcade-border text-arcade-muted hover:text-neon-cyan hover:border-neon-cyan/50 rounded-lg transition-all"
+              >
+                MAIN MENU
+              </button>
+            </div>
           </div>
 
           {/* Leaderboard */}
-          <div className="lg:w-64">
+          <div className="lg:w-72">
             <Leaderboard
-              game="1v1-lol-3d"
+              game="1v1lol"
               title="TOP SCORES"
               accentColor="neon-cyan"
             />
@@ -508,217 +699,178 @@ export default function OneLolGame() {
 
   // ─── Playing ──────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-7xl mx-auto px-4 py-4">
-      <div className="flex items-center gap-4 mb-3">
-        <button
-          onClick={() => navigate({ to: '/' })}
-          className="text-arcade-muted hover:text-neon-green transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="font-pixel text-lg text-neon-cyan tracking-widest">1V1.LOL 3D</h1>
-        <span
-          className="font-pixel text-xs ml-auto tracking-wider"
-          style={{ color: diffConfig.color }}
-        >
-          {diffConfig.label}
-        </span>
-      </div>
-
-      {/* Game container */}
-      <div
-        className="relative w-full rounded-xl overflow-hidden border-2 border-neon-cyan/40"
-        style={{ height: 'calc(100vh - 160px)', minHeight: '500px' }}
+    <div className="relative w-full" style={{ height: 'calc(100vh - 80px)' }}>
+      {/* 3D Canvas */}
+      <Canvas
+        shadows
+        camera={{ fov: 75, near: 0.1, far: 200 }}
+        style={{ background: '#0a0a1a' }}
       >
-        {/* 3D Canvas */}
-        <Canvas
-          shadows
-          camera={{
-            fov: 75,
-            near: 0.1,
-            far: 200,
-            position: [player.position.x, player.position.y, player.position.z],
-          }}
-          style={{ background: '#0a0a1a' }}
-        >
-          <Lights />
-          <Arena />
-          <BotMesh bot={bot} />
-          {projectiles.map((proj) => (
-            <ProjectileMesh key={proj.id} proj={proj} />
-          ))}
-          <PlayerController
-            keysRef={keysRef}
-            cameraRef={cameraRef}
-            playerPos={player.position}
-            isPlaying={phase === 'playing'}
-            onFire={firePlayer}
-          />
-        </Canvas>
+        <Lights />
+        <Arena />
+        <PlacedStructures structures={placedStructures} />
+        <GhostPreview
+          ghostPosition={ghostPosition}
+          ghostRotationY={ghostRotationY}
+          selectedStructure={selectedStructure}
+        />
+        <BotMesh bot={bot} />
+        {projectiles.map((proj) => (
+          <ProjectileMesh key={proj.id} proj={proj} />
+        ))}
+        <PlayerController
+          keysRef={keysRef}
+          cameraRef={cameraRef}
+          playerPos={player.position}
+          isPlaying={phase === 'playing'}
+          buildMode={buildMode}
+          onFire={firePlayer}
+        />
+      </Canvas>
 
-        {/* ── HUD overlay ── */}
+      {/* Build mode HUD (top-right) */}
+      <BuildModeHUD
+        buildMode={buildMode}
+        selectedStructure={selectedStructure}
+        onSelect={selectStructure}
+      />
 
-        {/* Click to lock overlay */}
-        {!isLocked && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-20">
-            <div className="text-center">
-              <Crosshair className="w-12 h-12 text-neon-cyan mx-auto mb-4 animate-pulse" />
-              <p className="font-pixel text-lg text-neon-cyan mb-2">CLICK TO PLAY</p>
-              <p className="font-pixel text-xs text-arcade-muted">Click the game to lock your mouse</p>
-              <p className="font-pixel text-xs text-arcade-muted mt-1">Press ESC to unlock</p>
-            </div>
-          </div>
-        )}
-
+      {/* HUD overlay */}
+      <div className="absolute inset-0 pointer-events-none">
         {/* Crosshair */}
-        {isLocked && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-            <div className="relative w-6 h-6">
-              <div className="absolute top-1/2 left-0 right-0 h-px bg-white/80 -translate-y-1/2" />
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/80 -translate-x-1/2" />
-              <div className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full bg-white/60 -translate-x-1/2 -translate-y-1/2" />
-            </div>
-          </div>
-        )}
-
-        {/* Player HP — top left */}
-        <div className="absolute top-3 left-3 z-10 pointer-events-none">
-          <div className="bg-black/70 rounded-lg px-3 py-2 border border-neon-cyan/30 min-w-[160px]">
-            <div className="flex justify-between font-pixel text-[10px] mb-1">
-              <span className="text-neon-cyan">YOU</span>
-              <span className="text-neon-cyan">{player.hp} HP</span>
-            </div>
-            <div className="h-2.5 bg-black/60 rounded-full overflow-hidden border border-neon-cyan/20">
-              <div
-                className="h-full rounded-full transition-all duration-100"
-                style={{
-                  width: `${playerHpPct * 100}%`,
-                  background: playerHpPct > 0.5 ? '#00ff88' : playerHpPct > 0.25 ? '#ffcc00' : '#ff3333',
-                  boxShadow: `0 0 6px ${playerHpPct > 0.5 ? '#00ff88' : playerHpPct > 0.25 ? '#ffcc00' : '#ff3333'}`,
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Bot HP — top right */}
-        <div className="absolute top-3 right-3 z-10 pointer-events-none">
-          <div className="bg-black/70 rounded-lg px-3 py-2 border border-neon-pink/30 min-w-[160px]">
-            <div className="flex justify-between font-pixel text-[10px] mb-1">
-              <span className="text-neon-pink">BOT</span>
-              <span className="text-neon-pink">{bot.hp} HP</span>
-            </div>
-            <div className="h-2.5 bg-black/60 rounded-full overflow-hidden border border-neon-pink/20">
-              <div
-                className="h-full rounded-full transition-all duration-100"
-                style={{
-                  width: `${botHpPct * 100}%`,
-                  background: botHpPct > 0.5 ? '#ff3333' : botHpPct > 0.25 ? '#ff8800' : '#ff0000',
-                  boxShadow: `0 0 6px ${botHpPct > 0.5 ? '#ff3333' : '#ff8800'}`,
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Difficulty — top center */}
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-          <div className="bg-black/70 rounded-lg px-3 py-1.5 border border-arcade-border/40">
-            <span
-              className="font-pixel text-[10px] tracking-widest"
-              style={{ color: diffConfig.color }}
-            >
-              {diffConfig.label}
-            </span>
-          </div>
-        </div>
-
-        {/* Weapon / Ammo — bottom center */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-          <div className="bg-black/80 rounded-xl px-5 py-3 border border-arcade-border/40 text-center min-w-[200px]">
-            {/* Weapon name */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative w-6 h-6">
             <div
-              className="font-pixel text-sm mb-1 tracking-widest"
-              style={{ color: playerWeapon.color }}
+              className="absolute top-1/2 left-0 right-0 h-px"
+              style={{ background: buildMode ? '#00ccff' : '#ffffff', opacity: 0.8 }}
+            />
+            <div
+              className="absolute left-1/2 top-0 bottom-0 w-px"
+              style={{ background: buildMode ? '#00ccff' : '#ffffff', opacity: 0.8 }}
+            />
+            <div
+              className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full -translate-x-1/2 -translate-y-1/2"
+              style={{ background: buildMode ? '#00ccff' : '#ffffff', opacity: 0.6 }}
+            />
+          </div>
+        </div>
+
+        {/* Player HP bar (bottom-left) */}
+        <div className="absolute bottom-20 left-4 w-48">
+          <div className="flex justify-between font-pixel text-[10px] mb-1">
+            <span className="text-neon-cyan">HP</span>
+            <span className="text-neon-cyan">{player.hp}</span>
+          </div>
+          <div className="h-3 bg-black/60 rounded-full overflow-hidden border border-neon-cyan/40">
+            <div
+              className="h-full rounded-full transition-all duration-100"
+              style={{
+                width: `${playerHpPct * 100}%`,
+                background: playerHpPct > 0.5 ? '#00ff88' : playerHpPct > 0.25 ? '#ffcc00' : '#ff3333',
+                boxShadow: `0 0 6px ${playerHpPct > 0.5 ? '#00ff88' : playerHpPct > 0.25 ? '#ffcc00' : '#ff3333'}`,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Bot HP bar (bottom-right) */}
+        <div className="absolute bottom-20 right-4 w-48">
+          <div className="flex justify-between font-pixel text-[10px] mb-1">
+            <span className="text-neon-pink">BOT</span>
+            <span className="text-neon-pink">{bot.hp}</span>
+          </div>
+          <div className="h-3 bg-black/60 rounded-full overflow-hidden border border-neon-pink/40">
+            <div
+              className="h-full rounded-full transition-all duration-100"
+              style={{
+                width: `${botHpPct * 100}%`,
+                background: botHpPct > 0.5 ? '#00ff88' : botHpPct > 0.25 ? '#ffcc00' : '#ff3333',
+                boxShadow: `0 0 6px ${botHpPct > 0.5 ? '#00ff88' : botHpPct > 0.25 ? '#ffcc00' : '#ff3333'}`,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Weapon / ammo (bottom-center) */}
+        {!buildMode && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
+            <div
+              className="font-pixel text-sm tracking-widest"
+              style={{ color: playerWeapon.color, textShadow: `0 0 10px ${playerWeapon.color}` }}
             >
               {playerWeapon.name}
             </div>
-
-            {/* Ammo */}
-            <div className="font-pixel text-xs text-arcade-muted mb-2">
+            <div className="font-pixel text-xs text-arcade-muted">
               {player.isReloading ? (
-                <span className="text-neon-yellow animate-pulse">RELOADING...</span>
+                <span className="text-neon-yellow">RELOADING...</span>
               ) : (
-                <span>
-                  <span style={{ color: playerWeapon.color }}>{player.ammo}</span>
-                  <span className="text-arcade-muted"> / {playerWeapon.maxAmmo}</span>
+                <span style={{ color: playerWeapon.color }}>
+                  {player.ammo} / {playerWeapon.maxAmmo}
                 </span>
               )}
             </div>
-
-            {/* Reload progress bar */}
             {player.isReloading && (
-              <div className="h-1.5 bg-black/60 rounded-full overflow-hidden border border-neon-yellow/30">
+              <div className="w-24 h-1.5 bg-black/60 rounded-full overflow-hidden border border-neon-yellow/40">
                 <div
-                  className="h-full rounded-full transition-all duration-100"
+                  className="h-full rounded-full transition-all"
                   style={{
                     width: `${player.reloadProgress * 100}%`,
                     background: '#ffcc00',
-                    boxShadow: '0 0 6px #ffcc00',
+                    boxShadow: '0 0 4px #ffcc00',
                   }}
                 />
               </div>
             )}
+          </div>
+        )}
 
-            {/* Weapon slots */}
-            <div className="flex gap-1.5 mt-2 justify-center">
-              {(['sniper', 'shotgun', 'pistol', 'machinegun'] as WeaponType[]).map((w, i) => (
-                <div
-                  key={w}
-                  className="font-pixel text-[8px] px-1.5 py-0.5 rounded border transition-all"
-                  style={{
-                    borderColor: player.weapon === w ? WEAPONS[w].color : 'rgba(255,255,255,0.1)',
-                    color: player.weapon === w ? WEAPONS[w].color : 'rgba(255,255,255,0.3)',
-                    background: player.weapon === w ? `${WEAPONS[w].color}22` : 'transparent',
-                  }}
-                >
-                  {i + 1}
-                </div>
-              ))}
+        {/* Build mode indicator (bottom-center) */}
+        {buildMode && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
+            <div
+              className="font-pixel text-sm tracking-widest"
+              style={{ color: STRUCTURE_COLORS_HEX[selectedStructure], textShadow: `0 0 10px ${STRUCTURE_COLORS_HEX[selectedStructure]}` }}
+            >
+              🏗 {STRUCTURE_LABELS[selectedStructure]}
+            </div>
+            <div className="font-pixel text-[9px] text-arcade-muted">
+              LMB — PLACE | F — COMBAT
             </div>
           </div>
+        )}
+
+        {/* Difficulty label (top-left) */}
+        <div className="absolute top-4 left-4">
+          <span
+            className="font-pixel text-[10px] px-2 py-1 rounded"
+            style={{
+              color: diffConfig.color,
+              background: 'rgba(0,0,0,0.5)',
+              border: `1px solid ${diffConfig.color}44`,
+            }}
+          >
+            {diffConfig.label}
+          </span>
         </div>
 
-        {/* Bot weapon info — bottom right */}
-        <div className="absolute bottom-4 right-3 z-10 pointer-events-none">
-          <div className="bg-black/60 rounded-lg px-3 py-2 border border-arcade-border/30">
-            <div className="font-pixel text-[9px] text-arcade-muted space-y-0.5">
-              <div>BOT WEAPON:</div>
-              <div style={{ color: WEAPONS[bot.weapon].color }}>{WEAPONS[bot.weapon].name}</div>
-              <div className="text-arcade-muted mt-1">
-                {bot.isReloading ? (
-                  <span className="text-neon-yellow">RELOADING</span>
-                ) : (
-                  <span>{bot.ammo}/{WEAPONS[bot.weapon].maxAmmo}</span>
-                )}
-              </div>
+        {/* Structures count (top-left, below difficulty) */}
+        {placedStructures.length > 0 && (
+          <div className="absolute top-10 left-4 mt-2">
+            <span className="font-pixel text-[9px] px-2 py-1 rounded" style={{ color: '#4488cc', background: 'rgba(0,0,0,0.5)', border: '1px solid #4488cc44' }}>
+              🏗 {placedStructures.length} BUILT
+            </span>
+          </div>
+        )}
+
+        {/* Pointer lock overlay */}
+        {!isLocked && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70 pointer-events-auto">
+            <div className="text-center">
+              <p className="font-pixel text-neon-cyan text-lg mb-2">CLICK TO PLAY</p>
+              <p className="font-pixel text-arcade-muted text-xs">Click to lock mouse and start</p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Controls reminder */}
-      <div className="mt-3 bg-arcade-card rounded-xl border border-neon-cyan/20 p-3">
-        <div className="flex flex-wrap gap-x-6 gap-y-1 font-pixel text-[9px] text-arcade-muted">
-          <span>WASD — Move</span>
-          <span>MOUSE — Look</span>
-          <span>LMB — Shoot</span>
-          <span>1 — Sniper</span>
-          <span>2 — Shotgun</span>
-          <span>3 — Pistol</span>
-          <span>4 — Machine Gun</span>
-          <span>ESC — Unlock Mouse</span>
-        </div>
+        )}
       </div>
     </div>
   );

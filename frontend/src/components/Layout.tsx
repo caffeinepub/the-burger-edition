@@ -22,6 +22,8 @@ const navLinks = [
   { to: '/among-us', label: 'AMONG US', color: 'hover:text-neon-cyan' },
   { to: '/fnaf', label: 'FNAF', color: 'hover:text-neon-pink' },
   { to: '/rocket-soccer-league', label: 'ROCKET SOCCER', color: 'hover:text-neon-cyan' },
+  { to: '/rocket-soccer-derby', label: 'DERBY', color: 'hover:text-neon-yellow' },
+  { to: '/f19-flight-simulator', label: 'F-19 SIM', color: 'hover:text-neon-green' },
 ];
 
 export default function Layout({ children }: LayoutProps) {

@@ -15,6 +15,8 @@ import RetroBowlGame from './pages/RetroBowlGame';
 import AmongUsGame from './pages/AmongUsGame';
 import FnafGame from './pages/FnafGame';
 import RocketSoccerLeagueGame from './pages/RocketSoccerLeagueGame';
+import RocketSoccerDerbyGame from './pages/RocketSoccerDerbyGame';
+import F19FlightSimulatorGame from './pages/F19FlightSimulatorGame';
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -114,6 +116,18 @@ const rocketSoccerLeagueRoute = createRoute({
   component: RocketSoccerLeagueGame,
 });
 
+const rocketSoccerDerbyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/rocket-soccer-derby',
+  component: RocketSoccerDerbyGame,
+});
+
+const f19FlightSimulatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/f19-flight-simulator',
+  component: F19FlightSimulatorGame,
+});
+
 const routeTree = rootRoute.addChildren([
   lobbyRoute,
   snakeRoute,
@@ -130,6 +144,8 @@ const routeTree = rootRoute.addChildren([
   amongUsRoute,
   fnafRoute,
   rocketSoccerLeagueRoute,
+  rocketSoccerDerbyRoute,
+  f19FlightSimulatorRoute,
 ]);
 
 const router = createRouter({ routeTree });
